@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lección 1 — Tu primera búsqueda con grep</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Curso de grep · Lección 1</p>
+  <h1>Tu primera búsqueda</h1>
+  <p>Grep es un <strong>filtro de líneas de texto</strong>. Todo lo demás es consecuencia de esa idea.</p>
+
+  <h2>El modelo mental</h2>
+  <p>Supón que tienes un archivo con un log de servidor, <code>log.txt</code>, y quieres ver solo los errores.
+  Sin grep, abres el archivo y lees todo. Con grep, le dices qué buscar y el comando te devuelve
+  <strong>únicamente las líneas que contienen ese texto</strong>:</p>
+
+  <pre><span class="cmd">grep 'ERROR' practice/log.txt</span></pre>
+
+  <p>Grep no "busca palabras": procesa el archivo <em>línea por línea</em> y decide, de cada una, si la
+  imprime o no. Si una línea contiene el patrón, la imprime completa. Si no, la descarta (<a href="https://man7.org/linux/man-pages/man1/grep.1.html">man grep</a>).</p>
+
+  <h2>La sintaxis</h2>
+  <div class="skill"><strong>Habilidad de la lección:</strong> lanzar <code>grep</code> con un patrón literal —de un archivo o de la salida de otro comando— y leer correctamente su salida.</div>
+
+  <pre>grep PATRÓN ARCHIVO</pre>
+
+  <ul>
+    <li><strong>PATRÓN</strong> — el texto a buscar. Siempre entre <strong>comillas simples</strong>.</li>
+    <li><strong>ARCHIVO</strong> — qué archivo leer. Puedes pasar varios archivos.</li>
+  </ul>
+
+  <div class="note">
+    <strong>¿Por qué las comillas simples?</strong> La terminal (shell) interpreta el texto antes de pasárselo a grep.
+    Las comillas simples le dicen a la shell "esto es un solo argumento, no lo toques". Si el patrón lleva espacios,
+    <code>grep error Algo</code> se partiría en dos argumentos y grep buscaría <code>error</code> en el archivo <code>Algo</code>.
+  </div>
+
+  <h2>Grep también lee de otros comandos</h2>
+  <p>Si no pasas archivo, grep lee de la <strong>entrada estándar</strong>. Por eso encaja a la perfección
+  con el <code>|</code> (pipe): tomas la salida de cualquier comando y la filtras.</p>
+
+  <pre><span class="cmd">cat practice/log.txt | grep 'ERROR'</span>
+<span class="cmd">grep 'ERROR' practice/log.txt | wc -l</span></pre>
+
+  <p>El segundo ejemplo cuenta (con <code>wc -l</code>) cuántas líneas de error hay, sin escribir a mano nada.
+  Es la combinación más común de la terminal: <em>comando → filtra → cuenta</em>.</p>
+
+  <h2>Varios archivos: grep te dice cuál</h2>
+  <p>Cuando grep lee más de un archivo, antepone el <strong>nombre del archivo</strong> a cada línea:</p>
+
+  <pre><span class="cmd">grep 'label' practice/project/src/components/Button.svelte practice/project/src/components/Card.svelte</span></pre>
+
+  <p>Verás salida con prefijo como <code>Button.svelte:export let label = "Botón";</code>. Ese prefijo "nombre de archivo + dos puntos"
+  es tu mapa de navegación cuando buscas en código.</p>
+
+  <h2>Práctica — corre estos ejercicios en tu terminal</h2>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 1</span><span class="check">▶ Úsalo</span></div>
+    <p class="ex-prompt">Desde la carpeta <code>grep</code> (la de este curso), busca las líneas que contienen <code>ERROR</code> (en mayúsculas) en <code>practice/log.txt</code>. Deberías ver 3 líneas.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep 'ERROR' practice/log.txt</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 2</span><span class="check">▶ Filtrar + contar</span></div>
+    <p class="ex-prompt">Cuenta cuántas líneas del log contienen <code>INFO</code>. Combina grep con <code>wc -l</code>. Espera un 6.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep 'INFO' practice/log.txt | wc -l</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 3</span><span class="check">▶ Tu misión</span></div>
+    <p class="ex-prompt">En <code>practice/project/src/App.svelte</code> se usa una función <code>eliminarTodo</code>. Encuéntrala con grep. Nota que, con un solo archivo, grep imprime la línea entera sin prefijo de nombre.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep 'eliminarTodo' practice/project/src/App.svelte
+
+  <Button label="Eliminar" on:click={() => eliminarTodo(todo.id)} />
+
+Aún no vemos el número de línea: eso llega con -n en la lección 2.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 4</span><span class="check">▶ Tu código real</span></div>
+    <p class="ex-prompt">Aplica lo mismo a un proyecto tuyo: entra a <code>~/Developer/frontend-mentor</code> y busca en un solo archivo html (por ejemplo <code>grep 'data' age-calculator-app-main/index.html</code>). Sabrás de qué trata cada proyecto en segundos.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">cd ~/Developer/frontend-mentor
+grep 'data' age-calculator-app-main/index.html</div>
+  </div>
+
+  <h2>Comprueba que lo retienes</h2>
+  <div class="quiz">
+    <div class="q" data-answer="0">
+      <p class="prompt">1. ¿Qué hace <code>grep 'algo' archivo.txt</code>?</p>
+      <button class="opt">Imprime líneas que coinciden</button>
+      <button class="opt">Borra líneas que coinciden</button>
+      <button class="opt">Cuenta líneas que coinciden</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">2. ¿Qué pasa si el patrón ocupa dos palabras y no usas comillas?</p>
+      <button class="opt">La shell los rompe</button>
+      <button class="opt">No llega alguno</button>
+      <button class="opt">Nada cambia</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">3. ¿De dónde lee grep cuando no le pasas archivo?</p>
+      <button class="opt">Entrada estándar stdin</button>
+      <button class="opt">Directorio actual cwd</button>
+      <button class="opt">Ningún lugar nunca</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">4. <code>grep 'x' a.txt b.txt</code> — ¿qué prefija la salida?</p>
+      <button class="opt">Los nombres de archivo</button>
+      <button class="opt">Los números de línea</button>
+      <button class="opt">Nada en absoluto</button>
+    </div>
+    <p class="score">Aciertos: 0 / 0</p>
+  </div>
+
+  <div class="primary-source">
+    <h3>Lee la fuente</h3>
+    <p>El manual de grep es corto, claro y definitivo: <a href="https://www.gnu.org/software/grep/manual/grep.html">GNU Grep Manual</a> §2 "Invoking grep". También lo tienes local: <code>man grep</code>. La <a href="../reference/0001-cheatsheet-basico.html">chuleta básica</a> resume esta lección.</p>
+  </div>
+
+  <div class="note">
+    <strong>¿Alguna duda?</strong> Pregúntale a tu agente-profesor cualquier cosa de esta lección, o pide el siguiente paso.
+  </div>
+
+  <footer class="lesson-links">
+    <a href="0002-cruzar-un-proyecto.html">Siguiente: cruzar un proyecto entero con grep -rn →</a>
+  </footer>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>

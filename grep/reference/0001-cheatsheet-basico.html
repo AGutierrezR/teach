@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chuleta — grep básico</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Referencia · Curso de grep</p>
+  <h1>Chuleta: grep básico</h1>
+  <p>Un resumen imprimible de la lección <a href="../lessons/0001-tu-primera-busqueda.html">01</a>. Guarda esta página para consulta rápida.</p>
+
+  <h2>Modelo mental</h2>
+  <p>grep es un <strong>filtro de líneas</strong>: lee texto, línea por línea, e imprime solo las que contienen el patrón.</p>
+
+  <h2>Sintaxis</h2>
+  <pre>grep PATRÓN ARCHIVO</pre>
+  <ul>
+    <li>Patrón siempre entre <strong>comillas simples</strong>: <code>grep 'texto' archivo</code></li>
+    <li>Varios archivos a la vez: cada línea sale con el prefijo <code>archivo:</code></li>
+    <li>Sin archivo → lee de la entrada estándar (aprovecha los pipes)</li>
+  </ul>
+
+  <h2>Comandos base</h2>
+  <table>
+    <tr><th>Comando</th><th>Efecto</th></tr>
+    <tr><td><code>grep 'x' f.txt</code></td><td>Líneas de f.txt con "x"</td></tr>
+    <tr><td><code>cat f.txt | grep 'x'</code></td><td>Idem, con pipe</td></tr>
+    <tr><td><code>grep 'x' f.txt | wc -l</code></td><td>Cuenta las coincidencias</td></tr>
+    <tr><td><code>grep 'x' a.txt b.txt</code></td><td>Marca qué línea es de qué archivo</td></tr>
+  </table>
+
+  <h2>Filtros de coincidencia</h2>
+  <table>
+    <tr><th>Comando</th><th>Efecto</th></tr>
+    <tr><td><code>grep -i 'x' f.txt</code></td><td>Ignora mayúsculas/minúsculas</td></tr>
+    <tr><td><code>grep -F 'x.y' f.txt</code></td><td>Literal exacto, sin regex ("fixed")</td></tr>
+    <tr><td><code>grep -E 'a|b' f.txt</code></td><td>Regex extendida: "o", <code>+</code>, <code>?</code>, <code>()</code></td></tr>
+    <tr><td><code>grep -v 'x' f.txt</code></td><td>Invierte: líneas que NO contienen "x"</td></tr>
+  </table>
+
+  <h2>Anchors y comodines (regex básica)</h2>
+  <table>
+    <tr><th>Patrón</th><th>Significado</th><th>Ejemplo</th></tr>
+    <tr><td><code>^</code></td><td>Inicio de línea</td><td><code>grep '^ERROR'</code></td></tr>
+    <tr><td><code>$</code></td><td>Fin de línea</td><td><code>grep 'OK$'</code></td></tr>
+    <tr><td><code>.</code></td><td>Cualquier carácter</td><td><code>grep 'f.tch'</code> → fetch, fitch</td></tr>
+    <tr><td><code>[0-9]</code></td><td>Un carácter del grupo</td><td><code>grep '[0-9]'</code></td></tr>
+    <tr><td><code>x.*y</code></td><td>x, luego cualquier cosa, luego y</td><td>aprox. fuzzy <code>e.*l.*m.*i</code></td></tr>
+  </table>
+  <p>Trampa clásica: <code>^INFO</code> sobre un log con timestamps da 0 líneas, porque las líneas no empiezan con "INFO".</p>
+
+  <h2>Fuzzy finding real</h2>
+  <p>grep no hace fuzzy matching. Para "tipeo suelto" interactivo usa <code>fzf</code>. O aproxima con regex:
+  <code>grep -i 'e.*l.*m.*i'</code> atrapa <code>eliminar</code> aunque se tipee mal.</p>
+
+  <h2>Pitfalls</h2>
+  <ul>
+    <li>Por defecto es <strong>sensible a mayúsculas</strong>: <code>ERROR</code> ≠ <code>error</code>; usa <code>-i</code></li>
+    <li>Sin comillas, la shell parte el patrón en dos argumentos</li>
+    <li>El patrón es regex: <code>.</code> <code>*</code> <code>^</code> <code>$</code> <code>[</code> <code>]</code> son mágicos; usa <code>-F</code> para literal</li>
+    <li>grep NO toca el archivo: solo lee</li>
+  </ul>
+
+  <h2>Fuente</h2>
+  <p><a href="https://man7.org/linux/man-pages/man1/grep.1.html">grep(1) man page</a> · <a href="https://www.gnu.org/software/grep/manual/grep.html">GNU Grep Manual</a></p>
+
+</div>
+</body>
+</html>
