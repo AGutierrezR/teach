@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lección 3 — Cruza proyectos enteros con grep -rn</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Curso de grep · Lección 3</p>
+  <h1>Cruza proyectos enteros con `grep -rn`</h1>
+  <p>Hasta ahora buscabas dentro de archivos concretos. Tu misión real es otra: «¿dónde se usa esta función?», «¿qué TODOs hay en
+  todo el proyecto?». Para eso necesitas que grep camine solo por carpetas y te dé la <strong>ubicación exacta</strong> en cada archivo.</p>
+
+  <div class="skill"><strong>Habilidad de la lección:</strong> buscar un patrón en un proyecto entero y obtener
+  <code>archivo:número-de-línea</code> para saltar directo al editor. Cierra la misión: <code>grep -rn</code> + <code>rg</code>.</div>
+
+  <h2>El problema</h2>
+  <p>Puedes pasar varios archivos a grep, pero eso no escala a un proyecto de 143 carpetas (tu <code>frontend-mentor</code>).
+  Necesitas dos banderas que van siempre juntas:</p>
+  <table>
+    <tr><th>Bandera</th><th>Qué hace</th></tr>
+    <tr><td><code>-r</code></td><td>Recorre (<em>recursive</em>) el directorio y todos los subdirectorios</td></tr>
+    <tr><td><code>-n</code></td><td>Antepone el <em>número de línea</em> en cada resultado</td></tr>
+  </table>
+
+  <h2>-r: deja que grep camine</h2>
+  <p>La sintaxis no cambia; el último argumento pasa de ser un archivo a ser una carpeta. El punto <code>.</code> significa
+  «aquí y todo lo que cuelga de aquí»:</p>
+  <pre><span class="cmd">grep -r 'eliminarTodo' practice/project/src</span></pre>
+  <p>Al apuntar a una carpeta, grep se recorre <em>todos</em> los archivos de dentro. Prueba a apuntar a la raíz del proyecto
+  (<code>grep -r 'TODO' practice/project</code>) y observa que la respuesta cambia de forma radical.</p>
+
+  <h2>-n: para saltar al lugar exacto</h2>
+  <p>Para un programador, el número de línea vale casi más que la línea misma: es el <em>trampolín</em> para ir directo a ese
+  punto en tu editor. Por eso el combo rey es <code>-rn</code>:</p>
+  <pre><span class="cmd">grep -rn 'TODO' practice/project/src</span></pre>
+  <p>Cada resultado sale con el <strong>formato <code>archivo:número:contenido</code></strong>. Los dos puntos son separadores — es el
+  idioma del grep, y también el de los editores («salta a la línea 36 de App.svelte»).</p>
+
+  <div class="note">
+    <strong>RECORDATORIO (lección 2, sólida):</strong> para alternancia usa siempre <code>-E</code>: <code>grep -rn -E 'TODO|FIXME'</code>.
+    Sin <code>-E</code>, el <code>|</code> es un carácter literal y grep buscaría el texto exacto "TODO|FIXME" — cero resultados.
+  </div>
+
+  <h2>La trampa de node_modules</h2>
+  <p>¿Recuerdas que <code>-r</code> recorre <em>todo</em> lo que cuelga? Eso incluye <code>node_modules</code>, que no es tuyo y no quieres.
+  El proyecto de práctica tiene un <code>node_modules/fake-ui</code> falso con su propio TODO para que veas la trampa:</p>
+  <pre><span class="cmd">grep -rn 'TODO' practice/project</span></pre>
+  <p>Dos resultados: el tuyo y el del paquete falso. Para excluir una carpeta (puedes repetir la bandera para otras):</p>
+  <pre><span class="cmd">grep -rn --exclude-dir=node_modules 'TODO' practice/project</span></pre>
+  <p>Resultado limpio: solo tu código. En proyectos grandes excluir no es una decisión de diseño: es supervivencia.</p>
+
+  <h2>`rg`: cuando grep se queda corto</h2>
+  <p>Ya tienes <code>rg</code> (ripgrep) instalado. Hace lo mismo con dos ventajas: es rapidísimo y
+  <strong>respeta tu archivo <code>.gitignore</code></strong>. Como <code>node_modules</code> suele estar ahí, se lo salta solo:</p>
+  <pre><span class="cmd">rg -n 'TODO' practice/project</span></pre>
+  <p>Un solo resultado, el tuyo, sin ninguna bandera de exclusión. La magia no es «adivinar carpetas sucias»: es leer tu
+  <code>.gitignore</code>. Si el repo no lo ignora, <code>rg</code> también lo buscará.</p>
+
+  <h2>Práctica — corre estos en tu terminal</h2>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 1</span><span class="check">▶ el formato de salida</span></div>
+    <p class="ex-prompt">Corre <code>grep -rn 'TODO' practice/project</code>. Verás 2 resultados (uno es de la librería falsa).
+    Lee el formato <code>archivo:número:contenido</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">practice/project/node_modules/fake-ui/index.js:1:// TODO: remove legacy styles
+practice/project/src/components/Card.svelte:13:<!-- TODO: allow configurable tone -->
+Fíjate: los dos puntos separan archivo, línea y contenido.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 2</span><span class="check">▶ ubicar un símbolo</span></div>
+    <p class="ex-prompt">¿Dónde se usa <code>eliminarTodo</code>? Ubícalo en <code>practice/project/src</code> con un solo comando.
+    Esa línea te dice el archivo Y la línea exacta.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -rn 'eliminarTodo' practice/project/src
+  → practice/project/src/App.svelte:36
+  (y nota: solo se usa, no se define en todo el proyecto)</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 3</span><span class="check">▶ excluir node_modules</span></div>
+    <p class="ex-prompt">Repite el búsqueda de TODOs y deja fuera <code>node_modules</code> con <code>--exclude-dir</code>.
+    Debe quedar un único resultado: tu código.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -rn --exclude-dir=node_modules 'TODO' practice/project
+  → solo practice/project/src/components/Card.svelte:13</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 4</span><span class="check">▶ rg hace lo mismo solo</span></div>
+    <p class="ex-prompt">Sobre el mismo proyecto, corre <code>rg -n 'TODO' practice/project</code>. Sin excluir nada,
+    da el mismo único resultado — el .gitignore excluye node_modules por ti.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">rg -n 'TODO' practice/project
+  → practice/project/src/components/Card.svelte:13 (solo tu código)</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 5</span><span class="check">▶ tu proyecto real</span></div>
+    <p class="ex-prompt">Entra a <code>~/Developer/svelte-apps-main</code> y busca TODOs
+    con <code>rg -n 'TODO' src</code>. Habrá varios en archivos como <code>bootstrap.ts</code> o <code>i18n.ts</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">cd ~/Developer/svelte-apps-main
+rg -n 'TODO' src   # verás ~27 TODOs con su archivo:línea</div>
+  </div>
+
+  <h2>Comprueba que lo retienes</h2>
+  <div class="quiz">
+    <div class="q" data-answer="0">
+      <p class="prompt">1. ¿Qué hace la bandera <code>-i</code>? (lección 1)</p>
+      <button class="opt">Ignora mayúsculas y minúsculas</button>
+      <button class="opt">Lista archivos y subcarpetas</button>
+      <button class="opt">Invierte las coincidencias</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">2. Sobre una línea «ab», ¿qué hace <code>-E 'a+b'</code>? (lección 2)</p>
+      <button class="opt">Encuentra la subcadena ab</button>
+      <button class="opt">Corta antes de la a</button>
+      <button class="opt">Da error por la b</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">3. ¿Qué añade la bandera <code>-n</code> a cada resultado?</p>
+      <button class="opt">El número de línea</button>
+      <button class="opt">El número de archivo</button>
+      <button class="opt">Salida silenciosa</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">4. ¿Qué hace la bandera <code>-r</code>?</p>
+      <button class="opt">Recorre subcarpetas</button>
+      <button class="opt">Reemplaza textos</button>
+      <button class="opt">Recorta la salida</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">5. ¿Qué respeta rg por defecto y grep no?</p>
+      <button class="opt">Tu archivo .gitignore</button>
+      <button class="opt">El archivo de registro</button>
+      <button class="opt">Las líneas largas</button>
+    </div>
+    <p class="score">Aciertos: 0 / 0</p>
+  </div>
+
+  <div class="primary-source">
+    <h3>Lee la fuente</h3>
+    <p>El <a href="https://www.gnu.org/software/grep/manual/grep.html">GNU Grep Manual</a>, sección "grep-options",
+    documenta <code>-R</code>/<code>-r</code> y <code>--exclude-dir</code>. Para el sucesor: la
+    <a href="https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md">ripgrep GUIDE</a> de BurntSushi, capítulo "Recursive search".
+    Tu chuleta: <a href="../reference/0001-cheatsheet-basico.html">regex básica y filtros</a>.</p>
+  </div>
+
+  <div class="note">
+    <strong>Misión cumplida.</strong> Ya buscas en proyectos enteros: <code>grep -rn</code> cuando el archivo importa
+    (sabes exactamente dónde está el código antes de abrirlo), <code>rg</code> cuando quieres ir rápido y limpio.
+    Cuando uno de tus greps tarde más de lo que tarda el pestañeo, ese es el momento de cambiar a <code>rg</code> para siempre.
+  </div>
+
+  <footer class="lesson-links">
+    <a href="0002-patrones-regex.html">← Lección 2: patrones regex</a> ·
+    <a href="../reference/0001-cheatsheet-basico.html">Chuleta →</a>
+  </footer>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>
