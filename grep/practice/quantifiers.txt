@@ -1,0 +1,12 @@
+too slow load
+took 12ms to respond
+tookkk after retries dumped data
+color: #fbbf24 (amber)
+colour: #b45309 (orange)
+ab is short
+abb has a double b
+a+b needs the literal plus
+report.txt archived
+reportXtxt also about the report
+ERROR fetch failed: connection refused from 192.168.1.10
+INFO took 3400ms for query /todos

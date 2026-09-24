@@ -50,12 +50,25 @@
     <tr><td><code>.</code></td><td>Cualquier carácter</td><td><code>grep 'f.tch'</code> → fetch, fitch</td></tr>
     <tr><td><code>[0-9]</code></td><td>Un carácter del grupo</td><td><code>grep '[0-9]'</code></td></tr>
     <tr><td><code>x.*y</code></td><td>x, luego cualquier cosa, luego y</td><td>aprox. fuzzy <code>e.*l.*m.*i</code></td></tr>
+    <tr><td><code>x*</code></td><td>anterior ×0..∞</td><td><code>took*</code> macha «too»</td></tr>
+    <tr><td><code>x+</code> (ERE)</td><td>anterior ×1..∞</td><td><code>took+</code> exige la k</td></tr>
+    <tr><td><code>x?</code> (ERE)</td><td>anterior ×0..1</td><td><code>colou?r</code> → color, colour</td></tr>
   </table>
-  <p>Trampa clásica: <code>^INFO</code> sobre un log con timestamps da 0 líneas, porque las líneas no empiezan con "INFO".</p>
+  <p>Trampa clásica: <code>^INFO</code> sobre un log con timestamps da 0 líneas, porque las líneas no empiezan con "INFO".
+  Los cuantores aplican al carácter <em>anterior</em>, y grep macha subcadenas en cualquier punto de la línea (un <code>-E 'a+b'</code> encuentra «ab» dentro de la palabra "about").</p>
 
   <h2>Fuzzy finding real</h2>
   <p>grep no hace fuzzy matching. Para "tipeo suelto" interactivo usa <code>fzf</code>. O aproxima con regex:
   <code>grep -i 'e.*l.*m.*i'</code> atrapa <code>eliminar</code> aunque se tipee mal.</p>
+
+  <h2>BRE vs ERE (la inversión de la barra)</h2>
+  <p>En BRE (grep a secas) la <code>\</code> <strong>da poder</strong>; en ERE (<code>-E</code>) <strong>lo quita</strong>.</p>
+  <table>
+    <tr><th>Mágico en ambos</th><td><code>.</code> <code>*</code> <code>^</code> <code>$</code> <code>[…]</code></td></tr>
+    <tr><th>Mágico solo en ERE</th><td><code>+</code> <code>?</code> <code>|</code> <code>(…)</code> <code>{m,n}</code></td></tr>
+    <tr><th>ENTONCES</th><td>En BRE se "encienden" con barra (<code>\+</code> <code>\|</code> <code>\(…\)</code>); en ERE la barra los apaga (<code>\+</code> = más literal).</td></tr>
+  </table>
+  <p><strong>Práctica:</strong> ¿tu patrón usa <code>| + ?</code> o grupos? → siempre <code>grep -E</code>. Es superconjunto de BRE. BSD grep no tiene <code>-P</code>.</p>
 
   <h2>Pitfalls</h2>
   <ul>

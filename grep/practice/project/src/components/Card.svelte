@@ -10,6 +10,8 @@
   <p>{content}</p>
 </div>
 
+<!-- TODO: allow configurable "tone" prop (neutral | accent | warn) -->
+
 <style>
   .card {
     border: 1px solid #e5e7eb;

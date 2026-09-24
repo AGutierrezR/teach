@@ -7,6 +7,8 @@
   {label}
 </button>
 
+<!-- FIXME: lacks :focus visible styles for keyboard nav -->
+
 <style>
   .btn {
     border: 1px solid #d1d5db;

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lección 2 — Patrones: busca estructura, no texto</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Curso de grep · Lección 2</p>
+  <h1>Patrones: busca estructura, no texto</h1>
+  <p>El patrón de grep no es una cadena normal: es una <strong>expresión regular</strong> (regex). Cuando escribiste <code>'ERROR'</code> en la lección 1 usabas regex sin darte cuenta. Ahora vamos a usar su poder.</p>
+
+  <h2>El modelo mental</h2>
+  <p>En una regex, algunos caracteres son <strong>mágicos</strong> (metacaracteres): no se buscan a sí mismos, significan otra cosa.
+  El resto son "literales". Casi todo el poder del patrón está en 5 magias:</p>
+
+  <table>
+    <tr><th>Magia</th><th>Significado</th><th>Ejemplo</th></tr>
+    <tr><td><code>.</code></td><td>Un carácter cualquiera</td><td><code>f.tch</code> → fetch, fitch, futch</td></tr>
+    <tr><td><code>*</code></td><td>Repite lo anterior (0 o más)</td><td><code>err.*fail</code> → "err, lo que sea, fail"</td></tr>
+    <tr><td><code>^</code></td><td>Ancla: inicio de línea</td><td><code>^export</code></td></tr>
+    <tr><td><code>$</code></td><td>Ancla: fin de línea</td><td><code>ms$</code></td></tr>
+    <tr><td><code>[…]</code></td><td>Un carácter del grupo</td><td><code>[0-9]</code>, <code>[Nn]</code></td></tr>
+  </table>
+
+  <div class="skill"><strong>Habilidad de la lección:</strong> usar <code>.</code>, anclas <code>^$</code>, clases <code>[…]</code> y la alternancia <code>-E</code> para buscar "estructura" en código y logs — no texto pegado.</div>
+
+  <h2>Los dos comodines que más usarás</h2>
+  <p><code>.</code> es útil, pero <code>.*</code> es la pareja estrella: <em>punto-asterisco = "lo que sea"</em>.</p>
+  <pre><span class="cmd">grep 'err.*fail' practice/log.txt</span></pre>
+  <p>Significa: una línea que tenga "err", luego cualquier cosa, luego "fail". Atrapa <code>ERROR fetch failed</code> y
+  variaciones imposibles de predecir. En logs, "lo que sea" es oro porque nunca sabes qué hay en medio.</p>
+
+  <h2>Anclas: fijar dónde</h2>
+  <p>Para listar el "API público" de un archivo, busca sus exports: las líneas que <em>empiezan</em> con <code>export</code>.
+  El símbolo <code>^</code> exige inicio de línea; <code>$</code> exige fin:</p>
+  <pre><span class="cmd">grep '^export' practice/project/src/lib/utils.js</span></pre>
+
+  <div class="note">
+    <strong>Trampa clásica (lección 1, sólida):</strong> <code>grep '^INFO' practice/log.txt</code> da 0 líneas, porque las líneas
+    empiezan con el timestamp <code>2026-…</code>, no con "INFO". El ancla <code>^</code> mira al MISMO inicio de la línea,
+    no a dónde está la palabra.
+  </div>
+
+  <h2>Alternancia con <code>-E</code></h2>
+  <p>La regex "básica" de grep no incluye <code>|</code> ("o"). La bandera <code>-E</code> activa la versión extendida, que añade
+  <code>|</code>, <code>+</code>, <code>?</code>, y los grupos <code>(…)</code>:</p>
+  <pre><span class="cmd">grep -E 'WARN|ERROR' practice/log.txt</span></pre>
+  <p>Ya no hace falta lanzar dos greps con un pipe. Buscar TODO/FIXME en tu código es un clásico:</p>
+  <pre><span class="cmd">grep -E 'TODO|FIXME' practice/project/src/components/Button.svelte practice/project/src/components/Card.svelte</span></pre>
+
+  <h2>Cuantificadores: `*`, `+`, `?`</h2>
+  <p>Los tres repiten <strong>solo el carácter anterior</strong>, y la diferencia entre ellos es solo el número de veces:</p>
+  <table>
+    <tr><th>Cuantor</th><th>Veces</th><th>Ejemplo</th><th>Acierta</th></tr>
+    <tr><td><code>x*</code></td><td>0 o más</td><td><code>took*</code></td><td>too, took, tookkk</td></tr>
+    <tr><td><code>x+</code> (ERE)</td><td>1 o más</td><td><code>took+</code></td><td>took, tookkk (no «too»)</td></tr>
+    <tr><td><code>x?</code> (ERE)</td><td>0 o 1</td><td><code>colou?r</code></td><td>color, colour</td></tr>
+  </table>
+  <p>El único caso que separa <code>*</code> de <code>+</code> es el cero: <code>took*</code> admite "too" (k 0 veces), <code>took+</code> exige la k.
+  Y <code>?</code> es el "o uno, o nada" — el clásico caso inglés: <code>colou?r</code> acierta color y colour.</p>
+
+  <p><strong>Recordatorio de semántica:</strong> grep encuentra la <em>subcadena</em> en cualquier punto de la línea, no la palabra entera.
+  Por eso <code>-E 'a+b'</code> también macha <code>reportXtxt also about the report</code>: encuentra <strong>"ab"</strong> dentro de "about".</p>
+
+  <h2>Literal exacto: <code>-F</code></h2>
+  <p>Si tu patrón contiene un carácter mágico que quieres buscar "tal cual", dos opciones: escapar cada uno (<code>127\.0\.0\.1</code>)
+  o quitarlo de la ecuación con <code>-F</code> (fixed string). Buscar una IP o versión como <code>1.5</code> es mucho más seguro con
+  <code>-F</code>: <code>grep '1.5'</code> también habría machado <code>1x5</code>.</p>
+
+  <h2>Práctica — corre estos en tu terminal</h2>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 1</span><span class="check">▶ Ancla $</span></div>
+    <p class="ex-prompt">En <code>practice/log.txt</code>, encuentra las líneas que <em>terminan</em> en <code>ms</code> (duración medida). Deberías ver 4.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep 'ms$' practice/log.txt</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 2</span><span class="check">▶ Ancla ^ en código</span></div>
+    <p class="ex-prompt">¿Cuántas funciones se exportan desde <code>practice/project/src/lib/utils.js</code>? Cuéntalas con <code>'^export'</code> y <code>wc -l</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep '^export' practice/project/src/lib/utils.js | wc -l   → 3</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 3</span><span class="check">▶ `.*` en logs</span></div>
+    <p class="ex-prompt">Busca en el log las líneas con "fetch" que vayan seguidas de un mensaje de fallo: patrón <code>'fetch.*fail'</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep 'fetch.*fail' practice/log.txt   → la línea del ERROR timeout</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 4</span><span class="check">▶ -E alternancia</span></div>
+    <p class="ex-prompt">Encuentra los TODOs y FIXMEs de los dos componentes (<code>Button.svelte</code> y <code>Card.svelte</code>). Será tu día a día en código ajeno.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -E 'TODO|FIXME' practice/project/src/components/Button.svelte practice/project/src/components/Card.svelte</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 5</span><span class="check">▶ * vs + (k)</span></div>
+    <p class="ex-prompt">Sobre <code>practice/quantifiers.txt</code> (nuevo archivo de práctica), corre literal <code>'took'</code>, BRE <code>'took*'</code> y <code>-E 'took+'</code>. Solo uno macha la línea <code>too slow load</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep 'took' practice/quantifiers.txt      → 3 líneas, sin «too»
+grep 'took*' practice/quantifiers.txt     → 4 líneas, incluida «too» (k ×0)
+grep -E 'took+' practice/quantifiers.txt → 3 líneas, sin «too» (exige la k)</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 6</span><span class="check">▶ ? opcional (u)</span></div>
+    <p class="ex-prompt">Encuentra <code>color</code> y <code>colour</code> con un solo patrón usando <code>-E</code>. Compara también con el literal <code>'colour'</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -E 'colou?r' practice/quantifiers.txt   → las 2 líneas
+grep 'colour' practice/quantifiers.txt    → solo «colour»</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 7</span><span class="check">▶ . mágico vs -F</span></div>
+    <p class="ex-prompt">En <code>quantifiers.txt</code> están <code>report.txt</code> y la trampa <code>reportXtxt</code>. Busca <code>'report.txt'</code> (2 líneas: el punto macha la X) y luego <code>-F 'report.txt'</code> (solo la real).</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep 'report.txt' practice/quantifiers.txt      → report.txt Y reportXtxt
+grep -F 'report.txt' practice/quantifiers.txt   → solo report.txt</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 8</span><span class="check">▶ + literal vs + cuantor</span></div>
+    <p class="ex-prompt">Busca la cadena literal <code>a+b</code> y luego "una o más 'a', seguidas de 'b'". Descubre por qué <code>-E 'a+b'</code> macha también la línea de <code>reportXtxt</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep 'a+b' practice/quantifiers.txt   → solo «a+b needs the literal plus» (BRE: + literal)
+grep -E 'a+b' practice/quantifiers.txt → «ab is short», «abb...», y «reportXtxt...»
+
+¿Por qué macha reportXtxt? Por la semántica de subcadena:
+encuentra «ab» DENTRO de la palabra "about" de esa línea.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 9</span><span class="check">▶ Tu código real</span></div>
+    <p class="ex-prompt">En un proyecto tuyo, lista los exports de un módulo: <code>grep '^export' ... </code> o busca TODO/FIXME con <code>grep -En 'TODO|FIXME'</code> sobre un par de archivos.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">cd ~/Developer/svelte-apps-main/src
+grep -E 'TODO|FIXME' lib/*.js 2>/dev/null   # ajusta rutas a tu proyecto</div>
+  </div>
+
+  <h2>Comprueba que lo retienes</h2>
+  <div class="quiz">
+    <div class="q" data-answer="0">
+      <p class="prompt">1. ¿Qué encuentra <code>grep '^export' f.js</code>?</p>
+      <button class="opt">Empiezan con export</button>
+      <button class="opt">Terminan en export</button>
+      <button class="opt">Que incluyen export</button>
+    </div>
+    <div class="q" data-answer="2">
+      <p class="prompt">2. ¿Cuál de estas líneas NO la encuentra <code>grep 'f.tch'</code>?</p>
+      <button class="opt">fetch</button>
+      <button class="opt">fitch</button>
+      <button class="opt">fscht</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">3. ¿Qué patrón significa "lo que sea en medio"?</p>
+      <button class="opt">Punto asterisco</button>
+      <button class="opt">Exclamación algo</button>
+      <button class="opt">Asterisco global</button>
+    </div>
+    <div class="q" data-answer="1">
+      <p class="prompt">4. (Repaso) ¿Qué bandera ignora mayúsculas?</p>
+      <button class="opt">-F</button>
+      <button class="opt">-i</button>
+      <button class="opt">-v</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">5. ¿Qué busca <code>grep -E 'TODO|FIXME'</code>?</p>
+      <button class="opt">TODO o también FIXME</button>
+      <button class="opt">TODO y después FIXME</button>
+      <button class="opt">Solo el texto TODO</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">6. ¿Qué patrón encuentra también la línea «too»?</p>
+      <button class="opt">El patrón took*</button>
+      <button class="opt">El patrón took+</button>
+      <button class="opt">El patrón took?</button>
+    </div>
+    <p class="score">Aciertos: 0 / 0</p>
+  </div>
+
+  <div class="primary-source">
+    <h3>Lee la fuente</h3>
+    <p>La sección "Basic vs Extended Regular Expressions" del
+    <a href="https://www.gnu.org/software/grep/manual/grep.html">GNU Grep Manual</a> explica exactamente qué añade <code>-E</code>.
+    Tu chuleta: <a href="../reference/0001-cheatsheet-basico.html">regex básica y filtros</a>.</p>
+  </div>
+
+  <div class="note">
+    <strong>¿Alguna duda?</strong> Pregúntale a tu agente-profesor. Y guarda fuerzas: la lección 3 te sacará del archivo suelto
+    para cruzar proyectos enteros con <code>-r</code> — con <code>grep -rn</code> tu misión de buscar en código se vuelve trivial.
+  </div>
+
+  <footer class="lesson-links">
+    <a href="0001-tu-primera-busqueda.html">← Lección 1: tu primera búsqueda</a> ·
+    <a href="0003-cruzar-un-proyecto.html">Lección 3: cruzar proyectos con grep -rn →</a>
+  </footer>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>
