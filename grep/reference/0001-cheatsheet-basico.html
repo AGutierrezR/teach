@@ -40,6 +40,17 @@
     <tr><td><code>grep -F 'x.y' f.txt</code></td><td>Literal exacto, sin regex ("fixed")</td></tr>
     <tr><td><code>grep -E 'a|b' f.txt</code></td><td>Regex extendida: "o", <code>+</code>, <code>?</code>, <code>()</code></td></tr>
     <tr><td><code>grep -v 'x' f.txt</code></td><td>Invierte: líneas que NO contienen "x"</td></tr>
+    <tr><td><code>grep -c 'x' f.txt</code></td><td>Solo el número de coincidencias</td></tr>
+    <tr><td><code>grep -o 'x' f.txt</code></td><td>Solo el pedazo que macha (extractor)</td></tr>
+  </table>
+
+  <h2>grep como filtro de otros comandos</h2>
+  <table>
+    <tr><th>Comando</th><th>Efecto</th></tr>
+    <tr><td><code>cmd | grep 'x'</code></td><td>Filtra la salida de cmd</td></tr>
+    <tr><td><code>cmd 2>&1 | grep 'x'</code></td><td>Incluye los errores de stderr</td></tr>
+    <tr><td><code>tail -f app.log | grep 'ERROR'</code></td><td>Filtra un log en vivo</td></tr>
+    <tr><td><code>ps aux | grep -v grep</code></td><td>Procesos, sin el propio grep</td></tr>
   </table>
 
   <h2>Enfoca el tipo de archivo</h2>

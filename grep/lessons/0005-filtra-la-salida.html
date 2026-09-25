@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lección 5 — Filtra la salida de cualquier comando</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Curso de grep · Lección 5</p>
+  <h1>Filtra la salida de cualquier comando</h1>
+  <p>Hasta ahora grep buscaba dentro de archivos. Pero su uso más frecuente en el día a día es otro: grep como
+  <strong>filtro</strong> de la salida de otros comandos. Un build, un log, el historial de git — todos escupen
+  montañas de texto, y tú solo quieres las pocas líneas que importan. El criterio 2 de tu misión te está esperando.</p>
+
+  <div class="skill"><strong>Habilidad de la lección:</strong> encadenar otro comando con grep mediante un pipe,
+  y redondear la caja de filtros con <code>-v</code>, <code>-c</code> y <code>-o</code>.</div>
+
+  <h2>grep como filtro</h2>
+  <p>El pipe <code>|</code> conecta lo que sale por el primer comando con grep (lo viste en la lección 1 con
+  <code>grep 'INFO' practice/log.txt | wc -l</code>). La sintaxis es simétrica: <em>comando | grep patrón</em>.</p>
+  <pre><span class="cmd">git log --oneline | grep 'LESSON'</span></pre>
+  <p>Varia en tu terminal: escribe dónde estés, y los clásicos de la vida real:</p>
+  <ul>
+    <li><code>npm run build 2>&1 | grep 'ERROR'</code> — builds lentos; quédate con los errores.</li>
+    <li><code>history | grep 'grep '</code> — recupera los comandos que ya usaste (golf mental evitado).</li>
+    <li><code>tail -f app.log | grep 'ERROR'</code> — log vivo: cada línea nueva pasa por el filtro.</li>
+    <li><code>ps aux | grep 'node'</code> — qué procesos están comiendo tu Mac.</li>
+  </ul>
+  <div class="note">
+    <strong>Dos pepitas técnicas.</strong> Los errores de un comando suelen salir por <em>stderr</em>, que el pipe no
+    filtra: añade <code>2>&1</code> para mezclar ambos y que grep los vea. Y ojo: <code>ps aux | grep 'node'</code>
+    siempre se incluye a sí mismo — añade <code>-v grep</code> para mirar limpio.
+  </div>
+
+  <h2>-v: dale la vuelta</h2>
+  <p>A veces quieres <em>todo menos</em>. La bandera <code>-v</code> invierte la selección: líneas que NO machan el patrón.</p>
+  <pre><span class="cmd">grep -v 'INFO' practice/log.txt</span></pre>
+  <p>En el log de práctica te deja exactamente las 4 líneas que no son INFO: el WARN y los tres ERROR. En builds,
+  «todo menos las warnings» es tu auxiliar diario.</p>
+
+  <h2>-c: cuenta, no imprimas</h2>
+  <p>Si solo quieres el número, <code>-c</code> suprime la salida y da el conteo directo. Macha la alternativa
+  <code>| wc -l</code> con un solo comando y sin pipe:</p>
+  <pre><span class="cmd">grep -c 'ERROR' practice/log.txt</span></pre>
+  <p>Ya no hace falta <code>grep 'ERROR' practice/log.txt | wc -l</code>. Con <code>-r</code> además da un conteo por
+  archivo (<code>grep -rc 'TODO' practice/project/src</code>).</p>
+
+  <h2>-o: solo lo que macha</h2>
+  <p>La salida normal es la línea completa. Pero a veces la línea es ruido y el match es el dato: <code>-o</code>
+  (<em>only-matching</em>).</p>
+  <pre><span class="cmd">grep -o '[0-9]*ms' practice/log.txt</span></pre>
+  <p>Extrae solo las duraciones: <code>12ms 3400ms 4ms 8ms</code>. Es tu modo «extractor»: IPs de un log, versiones,
+  ids — el dato que está escondido en una línea larga.</p>
+
+  <p>Las banderas se combinan apilando: <code>-ci</code> (cuenta sin caso), <code>-ov</code>, <code>-ric</code> (cuenta
+  por archivo, recursivo, sin distinguir mayúsculas).</p>
+
+  <h2>Práctica — corre estos en tu terminal</h2>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 1</span><span class="check">▶ filtra otro comando</span></div>
+    <p class="ex-prompt">¿Qué componentes svelte hay en <code>practice/project/src/components</code>? Filtra el listado de
+    <code>ls</code> en vez de mirar a mano.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">ls practice/project/src/components | grep 'svelte'
+  → Button.svelte y Card.svelte (ls lista, grep filtra).</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 2</span><span class="check">▶ el historial de git</span></div>
+    <p class="ex-prompt">¿Cuántas lecciones has cursado? Filtra el log de commits del repo con un pipe y cuenta con
+    <code>grep -c</code>. (Estás dentro del repo del curso.)</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">git log --oneline | grep -c 'LESSON'
+  → 4 (una por cada lección completada).</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 3</span><span class="check">▶ -v: todo menos</span></div>
+    <p class="ex-prompt">Sobre <code>practice/log.txt</code>, quédate con todas las líneas que NO sean INFO. ¿Cuántas
+    son y qué niveles quedan?</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -v 'INFO' practice/log.txt
+  → 4 líneas: el WARN (slow query) y los tres ERROR.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 4</span><span class="check">▶ -o: modo extractor</span></div>
+    <p class="ex-prompt">Del mismo log, extrae solo las duraciones con <code>grep -o '[0-9]*ms'</code>.
+    Adivina cuántas son antes de correrlo.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -o '[0-9]*ms' practice/log.txt
+  → 12ms, 3400ms, 4ms, 8ms (4 duraciones).</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 5</span><span class="check">▶ -c contra wc -l</span></div>
+    <p class="ex-prompt">Cuenta los ERROR del log de dos formas: <code>grep 'ERROR' practice/log.txt | wc -l</code> y
+    <code>grep -c 'ERROR' practice/log.txt</code>. Deben dar lo mismo.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">Ambos → 3. <code>-c</code> hace el trabajo de <code>| wc -l</code> con un comando menos.</div>
+  </div>
+
+  <h2>Comprueba que lo retienes</h2>
+  <div class="quiz">
+    <div class="q" data-answer="0">
+      <p class="prompt">1. ¿Qué hace <code>grep 'x' f | wc -l</code>? (lección 1)</p>
+      <button class="opt">Cuenta las coincidencias</button>
+      <button class="opt">Recorta cada coincidencia</button>
+      <button class="opt">Da vuelta el archivo</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">2. ¿Qué muestra <code>-C 2</code>? (lección 4)</p>
+      <button class="opt">Muestra las dos de al lado</button>
+      <button class="opt">Cuenta las dos de al lado</button>
+      <button class="opt">Borra las dos de al lado</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">3. ¿Qué hace la bandera <code>-v</code>?</p>
+      <button class="opt">Todo salvo el patrón</button>
+      <button class="opt">Solo lo que macha</button>
+      <button class="opt">Nada de este archivo</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">4. ¿Qué hace la bandera <code>-c</code>?</p>
+      <button class="opt">Cuenta los resultados</button>
+      <button class="opt">Corta los resultados</button>
+      <button class="opt">Colorea los resultados</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">5. ¿Qué hace la bandera <code>-o</code>?</p>
+      <button class="opt">Solo el pedazo ichado</button>
+      <button class="opt">Toda la línea entera</button>
+      <button class="opt">Otra opción distinta</button>
+    </div>
+    <p class="score">Aciertos: 0 / 0</p>
+  </div>
+
+  <div class="primary-source">
+    <h3>Lee la fuente</h3>
+    <p>El <a href="https://www.gnu.org/software/grep/manual/grep.html">GNU Grep Manual</a> documenta <code>-v</code>
+    (sección "Selecting Lines"), <code>-c</code> y <code>-o</code> ("General Output Control"). Para ideas de pipes útiles
+    en el día a día: <a href="https://github.com/jlevy/the-art-of-command-line">The Art of Command Line</a>.
+    Tu chuleta: <a href="../reference/0001-cheatsheet-basico.html">regex básica y filtros</a>.</p>
+  </div>
+
+  <div class="note">
+    <strong>¿Alguna duda?</strong> Pregúntale a tu agente-profesor. Y guarda fuerzas: con <code>-v</code>, <code>-c</code> y
+    <code>-o</code> cerraste la caja de filtros — la próxima lección es el cierre de curso: un refrito práctico que mezcla
+    todo lo aprendido en un solo flujo real.
+  </div>
+
+  <footer class="lesson-links">
+    <a href="0004-tipos-y-contexto.html">← Lección 4: tipos y contexto</a> ·
+    <a href="0006-flujo-real.html">Lección 6: un flujo real →</a>
+  </footer>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>
