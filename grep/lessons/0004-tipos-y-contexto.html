@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lección 4 — Enfoca el blanco: tipos y contexto</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Curso de grep · Lección 4</p>
+  <h1>Enfoca el blanco: tipos de archivo y contexto</h1>
+  <p>Ya cruzas proyectos enteros con <code>grep -rn</code> — pero un proyecto entero es un batiburrillo: <code>.svelte</code>,
+  <code>.js</code>, CSS, JSON. Esta lección te da dos tijeras: <strong>restringir el tipo de archivo</strong> y
+  <strong>ver el contexto</strong> alrededor del match (casi nunca basta la línea que acierta: quieres la función entera, no solo su firma).</p>
+
+  <div class="skill"><strong>Habilidad de la lección:</strong> limitar la búsqueda a ciertos tipos de archivo
+  (<code>--include</code>, <code>-g</code>, <code>-t</code>) y sacar contexto alrededor del match (<code>-A</code>, <code>-B</code>, <code>-C</code>).
+  Afina el criterio 3 de tu misión.</div>
+
+  <h2>El problema</h2>
+  <p>Recuerda la búsqueda sobre todo el proyecto (lección 3): ruido. Hay dos fuentes de ruido. La primera (carpetas como
+  <code>node_modules</code>) se resuelve con <code>--exclude-dir</code>. La segunda son los <strong>tipos de archivo</strong>:
+  a veces quieres solo <code>.svelte</code>, o solo <code>.js</code>.</p>
+
+  <h2>grep: --include y --exclude</h2>
+  <p>El filtro de archivos es un <strong>glob</strong> (como los de <code>ls *.svelte</code>), no una regex.
+  Las comillas son obligatorias: si no, el shell expandiría el asterisco antes de que grep lo vea:</p>
+  <pre><span class="cmd">grep -rn --include '*.svelte' 'TODO' practice/project</span></pre>
+  <p>Puedes repetir la bandera para aceptar varios tipos, o complementar con <code>--exclude '*.min.js'</code> para
+  vetar un tipo en concreto.</p>
+
+  <h2>rg: -g (globs) y -t (tipos predefinidos)</h2>
+  <p>Lo mismo en <code>rg</code> por dos vías. La primera, globs explícitos:</p>
+  <pre><span class="cmd">rg -n -g '*.svelte' 'TODO' practice/project</span></pre>
+  <p>La segunda es el atajo <code>-t</code>: un <strong>tipo</strong> es un nombre que rg ya sabe a qué extensiones corresponde.
+  Existen <code>svelte</code>, <code>js</code>, <code>typescript</code>, <code>html</code>… Lista completa con <code>rg --type-list</code>.
+  Mira el chiste:</p>
+  <pre><span class="cmd">rg -tjs 'TODO' practice/project</span></pre>
+  <p>cero resultados: no hay <code>.js</code> con TODO (y el <code>.gitignore</code> excluye el de la librería falsa).
+  <code>-t</code> filtra por extensión y punto.</p>
+
+  <h2>Contexto: -A, -B, -C</h2>
+  <p>Cuando aterrizas en la línea donde se define una función (lección 3), quieres ver su <em>cuerpo</em>, no solo la firma.
+  Tres banderas que se llevan perfecto con <code>-rn</code> (sinónimos exactos en grep y rg):</p>
+  <table>
+    <tr><th>Bandera</th><th>Muestra</th><th>Ejemplo</th></tr>
+    <tr><td><code>-A n</code></td><td><em>After</em>: n líneas después</td><td><code>grep -A3 'export function' f.js</code></td></tr>
+    <tr><td><code>-B n</code></td><td><em>Before</em>: n líneas antes</td><td><code>grep -B1 'MISSING' app.log</code></td></tr>
+    <tr><td><code>-C n</code></td><td><em>Context</em>: n a cada lado</td><td><code>rg -C2 'eliminarTodo' src</code></td></tr>
+  </table>
+  <p>El separador <code>--</code> delimita bloques distintos de coincidencias. Combinado con <code>-n</code>, ves el
+  <code>archivo:línea</code> del match y después el contexto: es como abrir el archivo en el editor, desde la terminal.</p>
+
+  <h2>Práctica — corre estos en tu terminal</h2>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 1</span><span class="check">▶ solo .svelte</span></div>
+    <p class="ex-prompt">Busca TODOs en <code>practice/project</code> pero solo en archivos <code>.svelte</code>, con
+    <code>grep -rn --include</code>. Debe quedar un solo resultado.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -rn --include '*.svelte' 'TODO' practice/project
+  → practice/project/src/components/Card.svelte:13</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 2</span><span class="check">▶ -t vs -g</span></div>
+    <p class="ex-prompt">Repite la búsqueda con <code>rg -tsvelte 'TODO' practice/project</code> y luego con
+    <code>rg -tjs 'TODO' practice/project</code>. ¿Por qué la segunda versión da cero?</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">rg -tsvelte → Card.svelte:13.
+rg -tjs     → 0: no hay .js con TODO dentro del alcance.
+<code>-t</code> filtra por extensión y se acabó.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 3</span><span class="check">▶ -C para ver la escena</span></div>
+    <p class="ex-prompt">Ubica <code>eliminarTodo</code> en <code>practice/project/src</code> con contexto de 2 líneas
+    (<code>rg -C2</code>). Deberías ver el <code>{#each todos…}</code> que abre la tarjeta y el <code>Button</code> que la cierra.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">rg -n -C2 'eliminarTodo' practice/project/src
+  → App.svelte:34 a 38: la tarjeta completa, con el Button y su clic.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 4</span><span class="check">▶ el cuerpo de una función</span></div>
+    <p class="ex-prompt">Saca la <em>definición entera</em> de <code>className</code> con su cuerpo: busca su firma en
+    <code>practice/project/src/lib/utils.js</code> con <code>-A3</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -A3 'export function className' practice/project/src/lib/utils.js
+  → firma + las 2 líneas del cuerpo (el filter y el join).</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 5</span><span class="check">▶ tu proyecto real, sin ruido</span></div>
+    <p class="ex-prompt">En <code>svelte-apps-main</code>, busca funciones de arranque solo en TypeScript con contexto:
+    <code>rg -n -ttypescript -C2 'export async function bootstrap' src</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">cd ~/Developer/svelte-apps-main
+rg -n -ttypescript -C2 'export async function bootstrap' src
+  → src/bootstrap.ts:29 con su firma y parámetros alrededor.</div>
+  </div>
+
+  <h2>Comprueba que lo retienes</h2>
+  <div class="quiz">
+    <div class="q" data-answer="0">
+      <p class="prompt">1. ¿Qué hace <code>grep -i</code>? (lección 1)</p>
+      <button class="opt">Ignora mayúsculas y minúsculas</button>
+      <button class="opt">Lista archivos y subcarpetas</button>
+      <button class="opt">Invierte las coincidencias</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">2. ¿Cuál de estos macha la línea «too»? (lección 2)</p>
+      <button class="opt">Patrón took con asterisco</button>
+      <button class="opt">Patrón took con el más</button>
+      <button class="opt">Patrón took con signo</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">3. ¿Qué sale en cada match de grep -rn? (lección 3)</p>
+      <button class="opt">El archivo y su línea</button>
+      <button class="opt">La carpeta y la fecha</button>
+      <button class="opt">El tamaño y la vista</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">4. ¿Qué filtra <code>--include '*.svelte'</code>?</p>
+      <button class="opt">A los archivos .svelte</button>
+      <button class="opt">Todos excepto svelte</button>
+      <button class="opt">La palabra svelte</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">5. ¿Qué muestra <code>-C 2</code>?</p>
+      <button class="opt">Dos líneas a cada lado</button>
+      <button class="opt">Dos líneas sino las hay</button>
+      <button class="opt">Dos segundos de espera</button>
+    </div>
+    <p class="score">Aciertos: 0 / 0</p>
+  </div>
+
+  <div class="primary-source">
+    <h3>Lee la fuente</h3>
+    <p>Para los globs y tipos de rg: <a href="https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md">ripgrep GUIDE</a>,
+    sección "Globs". Para el contexto de grep: <a href="https://www.gnu.org/software/grep/manual/grep.html">GNU Grep Manual</a>,
+    "Context Line Control" (-A, -B, -C). Tu chuleta: <a href="../reference/0001-cheatsheet-basico.html">regex básica y filtros</a>.</p>
+  </div>
+
+  <div class="note">
+    <strong>¿Alguna duda?</strong> Pregúntale a tu agente-profesor. Y guarda fuerzas: esto era lo último de búsqueda.
+    Con tipos + contexto ya haces el trabajo completo de "encontrar la función" que tu misión pedía.</div>
+
+  <footer class="lesson-links">
+    <a href="0003-cruzar-un-proyecto.html">← Lección 3: cruzar proyectos</a> ·
+    <a href="../reference/0001-cheatsheet-basico.html">Chuleta →</a>
+  </footer>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>

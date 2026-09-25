@@ -42,6 +42,23 @@
     <tr><td><code>grep -v 'x' f.txt</code></td><td>Invierte: líneas que NO contienen "x"</td></tr>
   </table>
 
+  <h2>Enfoca el tipo de archivo</h2>
+  <table>
+    <tr><th>Comando</th><th>Efecto</th></tr>
+    <tr><td><code>grep -rn --include '*.svelte'</code></td><td>Solo archivos .svelte (glob, con comillas)</td></tr>
+    <tr><td><code>grep -rn --exclude '*.min.js'</code></td><td>Veta un patrón de archivo</td></tr>
+    <tr><td><code>rg -g '*.svelte'</code></td><td>Glob en rg</td></tr>
+    <tr><td><code>rg -tsvelte</code></td><td>Tipo predefinido (<code>rg --type-list</code>)</td></tr>
+  </table>
+
+  <h2>Contexto alrededor del match</h2>
+  <table>
+    <tr><th>Comando</th><th>Efecto</th></tr>
+    <tr><td><code>grep -A3 'x' f.js</code></td><td>3 líneas <em>after</em> (después)</td></tr>
+    <tr><td><code>grep -B2 'x' f.js</code></td><td>2 líneas <em>before</em> (antes)</td></tr>
+    <tr><td><code>rg -C2 'x' src</code></td><td>2 líneas a cada lado</td></tr>
+  </table>
+
   <h2>Anchors y comodines (regex básica)</h2>
   <table>
     <tr><th>Patrón</th><th>Significado</th><th>Ejemplo</th></tr>
