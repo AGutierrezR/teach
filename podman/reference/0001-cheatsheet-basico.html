@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chuleta — Podman básico</title>
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  .cheat-section { margin-top: 2rem; }
+  .cheat-section h2 { font-size: 1.05rem; }
+  table.cheat td { font-family: "SF Mono", "Menlo", monospace; font-size: 0.8rem; }
+  table.cheat td.desc { font-family: "Avenir Next", system-ui, sans-serif; font-size: 0.85rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Referencia · Podman</p>
+  <h1>Chuleta básica</h1>
+  <p>Comandos esenciales de Podman en macOS. Imprimir y pegar junto al terminal.</p>
+
+  <div class="cheat-section">
+    <h2>La machine (VM Linux)</h2>
+    <table class="cheat">
+      <tr><td>podman machine init</td><td class="desc">Crea la VM (solo una vez)</td></tr>
+      <tr><td>podman machine start</td><td class="desc">Arranca la VM</td></tr>
+      <tr><td>podman machine stop</td><td class="desc">Detiene la VM</td></tr>
+      <tr><td>podman machine list</td><td class="desc">VMs y su estado</td></tr>
+      <tr><td>podman info</td><td class="desc">Diagnóstico; busca host.ok: true</td></tr>
+    </table>
+  </div>
+
+  <div class="cheat-section">
+    <h2>Contenedores</h2>
+    <table class="cheat">
+      <tr><td>podman run -d --name X IMAGEN</td><td class="desc">Lanza en segundo plano con nombre</td></tr>
+      <tr><td>podman run -p 8080:80 IMAGEN</td><td class="desc">Publica Mac:8080 → cont:80</td></tr>
+      <tr><td>podman run --rm IMAGEN cmd</td><td class="desc">Se borra al terminar</td></tr>
+      <tr><td>podman ps / podman ps -a</td><td class="desc">Corriendo / todos (incl. parados)</td></tr>
+      <tr><td>podman logs X</td><td class="desc">Salida del contenedor</td></tr>
+      <tr><td>podman stop X / start X</td><td class="desc">Parar / reanudar</td></tr>
+      <tr><td>podman rm X</td><td class="desc">Borra el contenedor</td></tr>
+      <tr><td>podman exec -it X sh</td><td class="desc">Shell dentro del contenedor</td></tr>
+      <tr><td>podman inspect X</td><td class="desc">JSON con todo su estado</td></tr>
+    </table>
+  </div>
+
+  <div class="cheat-section">
+    <h2>Imágenes</h2>
+    <table class="cheat">
+      <tr><td>podman pull IMAGEN</td><td class="desc">Descarga sin ejecutar</td></tr>
+      <tr><td>podman images</td><td class="desc">Imágenes locales</td></tr>
+      <tr><td>podman rmi IMAGEN</td><td class="desc">Borra una imagen</td></tr>
+      <tr><td>podman build -t NOMBRE .</td><td class="desc">Compila un Containerfile</td></tr>
+    </table>
+  </div>
+
+  <div class="cheat-section">
+    <h2>Montar código del host (clave para desarrollo)</h2>
+    <table class="cheat">
+      <tr><td>-v $PWD:/app</td><td class="desc">Monta el directorio actual en /app</td></tr>
+      <tr><td>-v $PWD:/app:ro</td><td class="desc">Solo lectura</td></tr>
+      <tr><td>-w /app</td><td class="desc">Directorio de trabajo dentro</td></tr>
+      <tr><td>--userns=keep-id</td><td class="desc">Misma UID: evita líos de permisos rootless</td></tr>
+    </table>
+    <div class="note"><strong>Trampa:</strong> sin <code>./</code> ni <code>/</code> al inicio de la ruta fuente,
+    Podman la interpreta como <em>volumen con nombre</em>, no como ruta
+    (<a href="https://docs.podman.io/en/latest/markdown/podman-run.1.html">podman-run(1)</a>).</div>
+  </div>
+
+  <div class="cheat-section">
+    <h2>Errores frecuentes</h2>
+    <table class="cheat">
+      <tr><td>cannot connect</td><td class="desc">La machine está apagada → podman machine start</td></tr>
+      <tr><td>connection refused en localhost</td><td class="desc">Falta -p o el proceso no escucha en 0.0.0.0</td></tr>
+      <tr><td>permission denied en -v</td><td class="desc">Añade --userns=keep-id</td></tr>
+      <tr><td>port already in use</td><td class="desc">Cambia el puerto izquierdo de -p</td></tr>
+    </table>
+  </div>
+
+  <footer class="lesson-links">
+    <a href="../lessons/0001-instala-y-primer-contenedor.html">← Volver a la Lección 1</a>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lección 1 — Instala Podman y corre tu primer contenedor</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Curso de Podman · Lección 1</p>
+  <h1>Instala Podman y corre tu primer contenedor</h1>
+  <p>Un contenedor es una <strong>caja aislada con su propio sistema Linux</strong> dentro de tu máquina.
+  En macOS esa caja vive dentro de una VM, y <code>podman machine</code> es la que la maneja.</p>
+
+  <h2>El modelo mental</h2>
+  <p>Los contenedores son Linux: usan el kernel de Linux. Tu Mac no lo es, así que Podman en macOS
+  instala una <strong>máquina virtual Linux</strong> (la <em>podman machine</em>) y tu comando
+  <code>podman</code> habla con ella por SSH
+  (<a href="https://www.redhat.com/en/blog/podman-mac-machine-architecture">Red Hat: cómo Podman corre en Macs</a>).
+  Tres piezas, nada más:</p>
+
+  <table>
+    <tr><th>Pieza</th><th>Qué es</th></tr>
+    <tr><td><code>podman</code> (CLI)</td><td>El comando que escribes en tu terminal. Corre en tu Mac.</td></tr>
+    <tr><td><code>podman machine</code></td><td>La VM Linux donde realmente viven los contenedores.</td></tr>
+    <tr><td>Contenedor</td><td>Una caja con una app (nginx, node…) dentro de esa VM.</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>Consecuencia práctica:</strong> si la machine está apagada, todo <code>podman</code> falla.
+    Es como Docker Desktop sin Docker Desktop — pero en terminal, que es como te gusta trabajar.
+  </div>
+
+  <h2>Instalación</h2>
+  <div class="skill"><strong>Habilidad de la lección:</strong> instalar Podman, arrancar la machine y
+  lanzar/ver/parar/borrar un contenedor con puertos publicados — todo desde la terminal.</div>
+
+  <p>El sitio oficial recomienda el <strong>instalador .pkg</strong>
+  (<a href="https://podman.io/docs/installation">podman.io/docs/installation</a>); Homebrew funciona pero es
+  mantenido por la comunidad. Elige uno:</p>
+
+  <pre><span class="cmd">brew install podman</span>
+<span class="cmd"># o: descargar el .pkg desde github.com/containers/podman/releases</span></pre>
+
+  <p>Después, crea y arranca la VM (una sola vez; después solo <code>start</code> al encender la Mac):</p>
+
+  <pre><span class="cmd">podman machine init</span>
+<span class="cmd">podman machine start</span>
+<span class="cmd">podman info</span>   <span class="cmd"># host.ok: true = listo</span></pre>
+
+  <h2>podman run: el comando central</h2>
+
+  <pre>podman run [FLAGS] IMAGEN [COMANDO]</pre>
+
+  <ul>
+    <li><strong>IMAGEN</strong> — la receta de la caja, p. ej. <code>docker.io/library/nginx</code>. Si no está descargada, se baja sola.</li>
+    <li><strong><code>-d</code></strong> — en segundo plano (detached), sin pegarse a tu terminal.</li>
+    <li><strong><code>--name X</code></strong> — nombre legible en vez de un hash aleatorio.</li>
+    <li><strong><code>-p 8080:80</code></strong> — publica: el puerto <code>8080</code> de tu Mac llega al <code>80</code> del contenedor.</li>
+    <li><strong><code>--rm</code></strong> — borra el contenedor cuando termina (ideal para comandos de una sola vez).</li>
+  </ul>
+
+  <p>Lanza un servidor web real y ábrelo en el navegador:</p>
+
+  <pre><span class="cmd">podman run -d --name web -p 8080:80 docker.io/nginx</span>
+<span class="cmd">podman ps</span>          <span class="cmd"># ¿está corriendo? columna PORTS</span>
+<span class="cmd">open http://localhost:8080</span></pre>
+
+  <p>En macOS, <code>-p</code> funciona porque la VM publica el puerto hacia tu Mac mediante
+  <code>gvisor-tap-vsock</code> (<a href="https://github.com/containers/podman/blob/main/docs/tutorials/basic_networking.md">basic_networking.md</a>).
+  Si no ves nada, casi siempre es que la machine se apagó.</p>
+
+  <h2>El ciclo de vida en 4 comandos</h2>
+
+  <table>
+    <tr><th>Verbo</th><th>Comando</th><th>Qué hace</th></tr>
+    <tr><td>Ver</td><td><code>podman ps</code> / <code>podman ps -a</code></td><td>Contenedores corriendo / todos</td></tr>
+    <tr><td>Escuchar</td><td><code>podman logs web</code></td><td>Salida estándar del contenedor</td></tr>
+    <tr><td>Parar</td><td><code>podman stop web</code></td><td>Detiene sin borrar (se puede volver a arrancar)</td></tr>
+    <tr><td>Borrar</td><td><code>podman rm web</code></td><td>Elimina el contenedor para siempre</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>Regla mnemotécnica:</strong> <em>stop</em> es pausa, <em>rm</em> es borrado.
+    <code>podman ps -a</code> te muestra todo — contenedores parados incluidos.
+    La imagen <code>nginx</code> sigue ahí tras el <code>rm</code>: borrar contenedor no borra la receta
+    (<code>podman images</code> para verlas).
+  </div>
+
+  <h2>Práctica — corre estos ejercicios en tu terminal</h2>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 1</span><span class="check">▶ Instala</span></div>
+    <p class="ex-prompt">Instala Podman, inicializa y arranca la machine, y comprueba con <code>podman info</code> que <code>host.ok</code> es <code>true</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">brew install podman
+podman machine init
+podman machine start
+podman info | grep -A2 host</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 2</span><span class="check">▶ Tu primer contenedor</span></div>
+    <p class="ex-prompt">Arranca nginx en segundo plano con el nombre <code>web</code> publicando el puerto 8080, y ábrelo en el navegador.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">podman run -d --name web -p 8080:80 docker.io/nginx
+open http://localhost:8080</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 3</span><span class="check">▶ Observa</span></div>
+    <p class="ex-prompt">Con <code>web</code> corriendo: lista contenedores, mira sus logs y detenlo. Comprueba con <code>podman ps</code> que ya no aparece, y con <code>podman ps -a</code> que sigue existiendo.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">podman ps
+podman logs web
+podman stop web
+podman ps      # ya no sale
+podman ps -a   # sale con Status: Exited</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 4</span><span class="check">▶ De una vez</span></div>
+    <p class="ex-prompt">Lanza un contenedor efímero que imprima algo y se borre solo al terminar. Usa <code>--rm</code> y verifica con <code>podman ps -a</code> que no queda residuo.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">podman run --rm docker.io/library/alpine echo hola desde el contenedor
+podman ps -a   # no debe aparecer nada</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 5</span><span class="check">▶ Tu misión</span></div>
+    <p class="ex-prompt">Limpia todo: borra el contenedor <code>web</code>, apaga la machine y vuelve a arrancarla. Confirma que <code>podman ps</code> vuelve a funcionar.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">podman rm web
+podman machine stop
+podman machine start
+podman ps</div>
+  </div>
+
+  <h2>Comprueba que lo retienes</h2>
+  <div class="quiz">
+    <div class="q" data-answer="0">
+      <p class="prompt">1. ¿Dónde corren realmente los contenedores en tu Mac?</p>
+      <button class="opt">En la VM Linux de Podman</button>
+      <button class="opt">En el kernel de macOS</button>
+      <button class="opt">En un servidor remoto</button>
+    </div>
+    <div class="q" data-answer="1">
+      <p class="prompt">2. ¿Qué hace <code>podman machine start</code>?</p>
+      <button class="opt">Detiene la VM Linux</button>
+      <button class="opt">Arranca la VM Linux</button>
+      <button class="opt">Crea una VM Linux</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">3. Con <code>-p 8080:80</code>, ¿qué puerto abres en el navegador?</p>
+      <button class="opt">El ochocientos ochenta</button>
+      <button class="opt">El ochenta del contenedor</button>
+      <button class="opt">El ochenta de tu Mac</button>
+    </div>
+    <div class="q" data-answer="2">
+      <p class="prompt">4. <code>podman stop web</code> seguido de <code>podman rm web</code> — ¿qué queda?</p>
+      <button class="opt">La imagen y el contenedor</button>
+      <button class="opt">Nada queda de ninguna</button>
+      <button class="opt">La imagen sin contenedor</button>
+    </div>
+    <div class="q" data-answer="1">
+      <p class="prompt">5. ¿Qué flag borra el contenedor al terminar su proceso?</p>
+      <button class="opt">El flag -d segundo plano</button>
+      <button class="opt">El flag --rm autodestruye</button>
+      <button class="opt">El flag -it interactiva</button>
+    </div>
+    <p class="score">Aciertos: 0 / 0</p>
+  </div>
+
+  <div class="primary-source">
+    <h3>Lee la fuente</h3>
+    <p>Tutorial oficial <em>Basic Setup and Use of Podman</em>
+    (<a href="https://github.com/containers/podman/blob/main/docs/tutorials/podman_tutorial.md">podman_tutorial.md</a>)
+    — la sección "Running a sample container" es exactamente esta lección.
+    La <a href="../reference/0001-cheatsheet-basico.html">chuleta básica</a> resume los comandos.</p>
+  </div>
+
+  <div class="note">
+    <strong>¿Alguna duda?</strong> Pregúntale a tu agente-profesor cualquier cosa de esta lección
+    (permisos, puertos, errores de la machine), o pide el siguiente paso.
+  </div>
+
+  <footer class="lesson-links">
+    <a href="../reference/0001-cheatsheet-basico.html">Chuleta básica de comandos →</a>
+  </footer>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>
