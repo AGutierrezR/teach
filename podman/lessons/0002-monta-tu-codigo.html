@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lección 2 — Monta tu código en el contenedor</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Curso de Podman · Lección 2</p>
+  <h1>Monta tu código en el contenedor</h1>
+  <p>El contenedor trae su propio sistema de archivos. Si quieres correr <strong>tu</strong> proyecto,
+  tienes dos caminos: copiar el código dentro o <strong>montar la carpeta de tu Mac</strong> dentro del contenedor.
+  Para desarrollo, se monta.</p>
+
+  <h2>Bind mount: una carpeta, dos mundos</h2>
+  <p>Con <code>-v</code> le dices a Podman: «esta carpeta de mi Mac aparece <em>tal cual</em> dentro del contenedor».
+  Es el mismo archivo, no una copia — editas en tu editor y el contenedor lo ve al instante.</p>
+
+  <pre>podman run -v RUTA_HOST:RUTA_CONTENEDOR IMAGEN [COMANDO]</pre>
+
+  <ul>
+    <li><strong>RUTA_HOST</strong> — ruta <strong>absoluta</strong> en tu Mac (usa <code>$PWD</code> = directorio actual).</li>
+    <li><strong>RUTA_CONTENEDOR</strong> — dónde aparece dentro (empieza siempre por <code>/</code>).</li>
+    <li><strong><code>:ro</code></strong> opcional — el contenedor solo puede leer, no escribir.</li>
+  </ul>
+
+  <div class="skill"><strong>Habilidad de la lección:</strong> lanzar el dev server de un proyecto Node
+  que vive en tu Mac, con el código montado dentro del contenedor, y verlo en el navegador.</div>
+
+  <div class="note">
+    <strong>Trampa nº 1 — la ruta relativa.</strong> En macOS y Linux, un argumento de <code>-v</code> que
+    <em>no</em> empieza por <code>/</code> ni <code>.</code> se interpreta como el <strong>nombre de un volumen</strong>
+    (otra cosa, verás en la lección 4), no como una ruta.
+    <code>-v proyecto:/app</code> ≠ <code>-v $PWD:/app</code>. Usa <code>$PWD</code> o <code>./</code>
+    (<a href="https://docs.podman.io/en/latest/markdown/podman-run.1.html">podman-run(1)</a>).
+  </div>
+
+  <h2>Tu proyecto de práctica</h2>
+  <p>En <code>podman/practice/</code> hay un servidor Node mínimo (sin dependencias): <code>package.json</code> + <code>server.js</code>.
+  Escucha en el puerto <code>3000</code> y sirve una página. Correlo <strong>sin contenedor</strong> primero, para saber cómo se comporta en tu Mac:</p>
+
+  <pre><span class="cmd">cd ~/Developer/teach/podman/practice</span>
+<span class="cmd">node server.js</span>      <span class="cmd"># abre http://localhost:3000 y luego Ctrl+C</span></pre>
+
+  <h2>La fórmula del dev server en contenedor</h2>
+
+  <pre>podman run --rm -d --name demo \
+  -v "$PWD":/app \
+  -w /app \
+  -p 3000:3000 \
+  docker.io/library/node:22-alpine \
+  node server.js</pre>
+
+  <table>
+    <tr><th>Flag</th><th>Por qué está</th></tr>
+    <tr><td><code>-v "$PWD":/app</code></td><td>Tu carpeta actual (el proyecto) montada en <code>/app</code>.</td></tr>
+    <tr><td><code>-w /app</code></td><td>El contenedor "entra" a <code>/app</code>: sin esto, <code>node server.js</code> buscaría en <code>/</code> y fallaría.</td></tr>
+    <tr><td><code>-p 3000:3000</code></td><td>El servidor corre en el contenedor; tú accedes por <code>localhost:3000</code> en tu Mac.</td></tr>
+    <tr><td><code>node server.js</code></td><td>El comando final reemplaza el ENTRYPOINT de la imagen: es lo que se ejecuta.</td></tr>
+    <tr><td><code>docker.io/library/node:22-alpine</code></td><td>Imagen oficial de Node 22, variante <em>alpine</em> (miniatura).</td></tr>
+  </table>
+
+  <p>Comprueba y ábrelo:</p>
+
+  <pre><span class="cmd">podman ps</span>
+<span class="cmd">podman logs demo</span>
+<span class="cmd">open http://localhost:3000</span></pre>
+
+  <div class="note">
+    <strong>¿Por qué alpine?</strong> Es la variante ligera de una imagen (~5MB vs ~400MB).
+    Funciona igual para Node. Regla: <code>IMAGEN:TAG</code>, y sin <code>TAG</code> se asume <code>latest</code>
+    (<a href="https://github.com/containers/podman/blob/main/docs/tutorials/podman_tutorial.md">podman_tutorial.md</a>).
+  </div>
+
+  <h2>Edición en vivo: lo que sí y lo que no se recarga solo</h2>
+  <p>El bind mount hace que tu carpeta sea <strong>la misma</strong> dentro y fuera del contenedor: editas en tu editor
+  y el archivo cambia dentro al instante. Pero hay dos casos distintos:</p>
+
+  <table>
+    <tr><th>Qué editas</th><th>¿Se ve al recargar?</th><th>Por qué</th></tr>
+    <tr><td>Archivos que el proceso lee en cada petición (HTML estático, datos, plantillas)</td>
+        <td><strong>Sí</strong>, solo recarga</td>
+        <td>El proceso vuelve a leer el archivo del disco</td></tr>
+    <tr><td>El código del propio proceso (<code>server.js</code>)</td>
+        <td><strong>No</strong>: reinicia</td>
+        <td>Node ya cargó ese código en memoria al arrancar</td></tr>
+  </table>
+
+  <p>Prueba el segundo caso: edita el <code>&lt;h1&gt;</code> de <code>server.js</code>, recarga (no cambia),
+  y reinicia el contenedor —el mismo contenedor, sin crear otro—:</p>
+
+  <pre><span class="cmd">podman restart demo</span>
+<span class="cmd">open http://localhost:3000</span>   <span class="cmd"># ahora sí, tu texto nuevo</span></pre>
+
+  <div class="note">
+    <strong>Regla:</strong> el bind mount sincroniza <em>archivos</em>, no <em>procesos</em>.
+    Cambios de código → <code>podman restart</code>. Cambios de contenido leído en cada petición → solo recargar.
+    En desarrollo con <em>watch</em> (nodemon, <code>tsc --watch</code>) el proceso se reinicia solo,
+    y ahí sí bastará recargar.
+  </div>
+
+  <h2>Entrar al contenedor: exec</h2>
+  <p>A veces necesitas mirar dentro — qué hay en <code>/app</code>, qué versión de node ve:</p>
+
+  <pre><span class="cmd">podman exec -it demo sh</span>
+<span class="cmd"># ahora estás "dentro":</span>
+<span class="cmd">pwd &amp;&amp; ls</span>        <span class="cmd"># /app con tus archivos</span>
+<span class="cmd">node --version</span>
+<span class="cmd">exit</span>            <span class="cmd"># vuelves a tu Mac</span></pre>
+
+  <ul>
+    <li><strong><code>exec</code></strong> — lanza un proceso <em>adicional</em> en un contenedor que ya corre (a diferencia de <code>run</code>, que crea uno nuevo).</li>
+    <li><strong><code>-it</code></strong> — tty interactivo: puedas escribir y ver la salida en vivo. <code>sh</code> es la shell de alpine.</li>
+  </ul>
+
+  <div class="note">
+    <strong>Trampa nº 2 — tú eras root.</strong> Por defecto, dentro del contenedor eres <code>root</code> (UID 0),
+    pero rootless Podman mapea ese root a tu usuario de la Mac, así que los archivos que cree en <code>/app</code>
+    suelen aparecer como tuyos. Si un contenedor te da <em>permission denied</em> al escribir, la solución estándar es
+    <code>--userns=keep-id</code> — lo veremos cuando pase de verdad
+    (<a href="https://github.com/containers/podman/blob/main/docs/tutorials/rootless_tutorial.md">rootless_tutorial.md</a>).
+  </div>
+
+  <h2>Práctica — corre estos ejercicios en tu terminal</h2>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 1</span><span class="check">▶ Ve el archivo desde dentro</span></div>
+    <p class="ex-prompt">Sin crear contenedor nuevo: con la imagen de node y <code>-v "$PWD":/app -w /app</code>, imprime el contenido de <code>server.js</code> <em>desde dentro</em> del contenedor con <code>cat</code>. Usa <code>--rm</code> para que no quede basura.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">cd ~/Developer/teach/podman/practice
+podman run --rm -v "$PWD":/app -w /app docker.io/library/node:22-alpine cat server.js</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 2</span><span class="check">▶ Tu dev server</span></div>
+    <p class="ex-prompt">Arranca <code>server.js</code> con nombre <code>demo</code> en segundo plano, puerta 3000, y ábrelo en el navegador. Verifica antes con <code>podman ps</code> que está corriendo.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">cd ~/Developer/teach/podman/practice
+podman run --rm -d --name demo -v "$PWD":/app -w /app -p 3000:3000 docker.io/library/node:22-alpine node server.js
+open http://localhost:3000</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 3</span><span class="check">▶ Código vs contenido</span></div>
+    <p class="ex-prompt">Edita el <code>&lt;h1&gt;</code> de <code>practice/server.js</code> y recarga: no cambia (Node lo tiene en memoria). Hazlo aparecer <strong>sin crear un contenedor nuevo</strong>, reiniciando el que ya existe. Después confirma con <code>podman ps</code> que sigue siendo el mismo CONTAINER ID.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer"># 1. edita server.js y guarda; recarga → no cambia
+podman restart demo
+# 2. recarga http://localhost:3000 → ya sale tu texto
+podman ps   # mismo CONTAINER ID, Up reiniciado</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 4</span><span class="check">▶ Explora por dentro</span></div>
+    <p class="ex-prompt">Entra al contenedor <code>demo</code> con un shell, lista <code>/app</code>, comprueba la versión de node y sal. Todo con un solo comando de entrada y la palabra clave de salida.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">podman exec -it demo sh
+ls -l /app
+node --version
+exit</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 5</span><span class="check">▶ Ojo con la ruta</span></div>
+    <p class="ex-prompt">Comete el error a propósito: lanza <code>podman run --rm -v proyecto:/app docker.io/library/node:22-alpine ls /app</code> (sin <code>$PWD</code>) y observa qué hay en <code>/app</code>. Luego compáralo con la versión <code>-v "$PWD":/app</code>. ¿Qué creó el primer comando?</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">podman run --rm -v proyecto:/app docker.io/library/node:22-alpine ls -a /app
+# → directorio vacío: Podman creó un VOLUMEN llamado "proyecto"
+# y lo montó. Tus archivos no están: no era una ruta de host.
+podman volume ls   # ahí lo ves listado</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Ejercicio 6</span><span class="check">▶ Limpieza</span></div>
+    <p class="ex-prompt">Detén y borra el contenedor <code>demo</code>, y borra también el volumen huérfano <code>proyecto</code> que creaste en el ejercicio anterior.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">podman rm -f demo
+podman volume rm proyecto
+podman ps -a &amp;&amp; podman volume ls</div>
+  </div>
+
+  <h2>Comprueba que lo retienes</h2>
+  <div class="quiz">
+    <div class="q" data-answer="0">
+      <p class="prompt">1. <code>-v "$PWD":/app</code> — ¿qué significa <code>/app</code>?</p>
+      <button class="opt">Dónde vive en el contenedor</button>
+      <button class="opt">Dónde vive en tu Mac</button>
+      <button class="opt">Nombre del volumen nuevo</button>
+    </div>
+    <div class="q" data-answer="1">
+      <p class="prompt">2. ¿Para qué sirve <code>-w /app</code>?</p>
+      <button class="opt">Da permisos de escritura</button>
+      <button class="opt">Fija el directorio de trabajo</button>
+      <button class="opt">Monta el volumen como solo lectura</button>
+    </div>
+    <div class="q" data-answer="2">
+      <p class="prompt">3. Editaste el código de <code>server.js</code> (el proceso Node). ¿Qué debes hacer?</p>
+      <button class="opt">Reconstruir la imagen entera</button>
+      <button class="opt">Reiniciar la podman machine</button>
+      <button class="opt">Reiniciar el contenedor demo</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">4. <code>exec</code> y <code>run</code> — ¿cuál entra a un contenedor ya corriendo?</p>
+      <button class="opt">El exec entra al que corre</button>
+      <button class="opt">El run entra al que corre</button>
+      <button class="opt">Los dos crean contenedor nuevo</button>
+    </div>
+    <div class="q" data-answer="1">
+      <p class="prompt">5. <code>-v proyecto:/app</code> con ruta relativa sin <code>./</code> — ¿qué crea?</p>
+      <button class="opt">Un error de sintaxis</button>
+      <button class="opt">Un volumen con nombre</button>
+      <button class="opt">Un enlace simbólico</button>
+    </div>
+    <p class="score">Aciertos: 0 / 0</p>
+  </div>
+
+  <div class="primary-source">
+    <h3>Lee la fuente</h3>
+    <p>Tutorial <em>Basic Setup and Use of Podman in a Rootless environment</em>
+    (<a href="https://github.com/containers/podman/blob/main/docs/tutorials/rootless_tutorial.md">rootless_tutorial.md</a>)
+    — sección "Using volumes": por qué un bind mount se ve raro y cuándo va <code>--userns=keep-id</code>.
+    Referencia de flags: <a href="https://docs.podman.io/en/latest/markdown/podman-run.1.html">podman-run(1)</a>.
+    La <a href="../reference/0001-cheatsheet-basico.html">chuleta</a> ya cubre <code>-v</code>.</p>
+  </div>
+
+  <div class="note">
+    <strong>¿Alguna duda?</strong> Pregúntale a tu agente-profesor: rutas que no montan, permisos raros,
+    imágenes que no bajan, o pide el siguiente paso (Containerfile / imágenes propias).
+  </div>
+
+  <footer class="lesson-links">
+    <a href="0001-instala-y-primer-contenedor.html">← Lección 1: primer contenedor</a>
+    &nbsp;·&nbsp;
+    <a href="../reference/0001-cheatsheet-basico.html">Chuleta básica</a>
+  </footer>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>

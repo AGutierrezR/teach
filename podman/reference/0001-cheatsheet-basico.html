@@ -39,6 +39,7 @@
       <tr><td>podman ps / podman ps -a</td><td class="desc">Corriendo / todos (incl. parados)</td></tr>
       <tr><td>podman logs X</td><td class="desc">Salida del contenedor</td></tr>
       <tr><td>podman stop X / start X</td><td class="desc">Parar / reanudar</td></tr>
+      <tr><td>podman restart X</td><td class="desc">Reinicia: recarga el código en memoria</td></tr>
       <tr><td>podman rm X</td><td class="desc">Borra el contenedor</td></tr>
       <tr><td>podman exec -it X sh</td><td class="desc">Shell dentro del contenedor</td></tr>
       <tr><td>podman inspect X</td><td class="desc">JSON con todo su estado</td></tr>
@@ -75,6 +76,7 @@
       <tr><td>connection refused en localhost</td><td class="desc">Falta -p o el proceso no escucha en 0.0.0.0</td></tr>
       <tr><td>permission denied en -v</td><td class="desc">Añade --userns=keep-id</td></tr>
       <tr><td>port already in use</td><td class="desc">Cambia el puerto izquierdo de -p</td></tr>
+      <tr><td>cambio de código no se ve</td><td class="desc">Node lo tiene en memoria → podman restart</td></tr>
     </table>
   </div>
 
