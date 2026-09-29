@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lección 6 — Un flujo real: de la duda al dato</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="kicker">Curso de grep · Lección 6 (cierre)</p>
+  <h1>Un flujo real: de la duda al dato</h1>
+  <p>Vas a encadenar <em>todo</em> lo aprendido en una sola investigación de verdad. Escenario: llega un error de
+  producción — <code>fetch failed: timeout reading /users</code>. Tu trabajo: ir desde la duda hasta el dato, sin abrir
+  un solo archivo a mano. Todo entra por <code>grep</code>, <code>rg</code> y un pipe bien puesto.</p>
+
+  <div class="skill"><strong>Habilidad de la lección:</strong> resolver una investigación real combinando el patrón, el
+  ámbito (directorio + tipo), el contexto y los filtros de salida en un flujo encadenado.</div>
+
+  <h2>Misión: encuentra al culpable</h2>
+  <p>El error habla de <code>/users</code>. Ese path lo construye <code>fetchUsers</code>. Tu primera pregunta:
+  ¿dónde vive esa función y quién la llama? Sigue la cadena con estas cinco pistas (los ejercicios de abajo).
+  Cada respuesta anterior alimenta la siguiente pregunta.</p>
+
+  <h2>Práctica — el flujo completo</h2>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Pista 1</span><span class="check">▶ dónde está el fetch</span></div>
+    <p class="ex-prompt">Ubica todas las llamadas a <code>fetch</code> (el verbo, no la función) en
+    <code>practice/project/src</code>. Esperado: <code>api.js</code> y un import en <code>App.svelte</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">rg -n 'fetch' practice/project/src
+  → api.js:3,4,6,12,13 y App.svelte:4,15 (import + uso de fetchTodos).</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Pista 2</span><span class="check">▶ la definición entera</span></div>
+    <p class="ex-prompt">El error viene de <code>/users</code>. Saca la definición de <code>fetchUsers</code> con su contexto
+    para ver de qué va (firma + cuerpo).</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">rg -n -C2 'fetchUsers' practice/project/src
+  → api.js:12-14: la función, el fetch a /users y el parseo.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Pista 3</span><span class="check">▶ hallazgo: código muerto</span></div>
+    <p class="ex-prompt">El error de producción habla de <code>/users</code>… pero las llamadas reales solo tocan
+    <code>fetchTodos</code> (Pista 1). ¿Alguien usa <code>fetchUsers</code> en los componentes? Filtra por tipo
+    <code>.svelte</code>.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -rn --include '*.svelte' 'fetchUsers' practice/project/src
+  → 0 resultados. fetchUsers está definido pero NADIE lo llama en la UI:
+  o el error es de un deploy viejo, o tienes una función sin estrenar.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Pista 4</span><span class="check">▶ inventario de deuda</span></div>
+    <p class="ex-prompt">De paso, ¿cuántos TODOs/FIXMEs hay por archivo en todo el <code>src</code>? Un recuento en
+    un solo comando (sin <code>wc</code>).</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -rc -E 'TODO|FIXME' practice/project/src
+  → Button.svelte:1, Card.svelte:1, y el resto a 0 (deuda concentrada en 2 componentes).</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><span>Pista 5</span><span class="check">▶ el log con lupa</span></div>
+    <p class="ex-prompt">En <code>practice/log.txt</code>: (a) quédate solo con los niveles problemáticos
+    (<code>ERROR|WARN</code>), y (b) extrae las duraciones y averigua cuál fue la peor de la sesión.</p>
+    <button class="reveal">Mostrar respuesta</button>
+    <div class="answer">grep -E 'ERROR|WARN' practice/log.txt          → 4 líneas: el WARN y los 3 ERROR
+grep -o '[0-9]*ms' practice/log.txt | sort -nr | head -1  → 3400ms (la slow query, que además es el WARN)</div>
+  </div>
+
+  <h2>Checklist de misión</h2>
+  <table>
+    <tr><th>Criterio de éxito (de MISSION.md)</th><th>Lo dominas con</th></tr>
+    <tr><td>grep -rn y aterrizar en la definición</td><td><code>-r</code>, <code>-n</code>, <code>-C</code></td></tr>
+    <tr><td>Filtrar salida de builds/logs/git</td><td><code>cmd | grep</code>, <code>2>&1</code></td></tr>
+    <tr><td>Excluir ruido y limitar tipos</td><td><code>--exclude-dir</code>, <code>-t</code></td></tr>
+    <tr><td>Saber cuándo usar rg</td><td>repo grande + <code>gitignore</code> → <code>rg</code></td></tr>
+  </table>
+  <p>Misión cumplida. Repite la <a href="0001-tu-primera-busqueda.html">lección 1</a> algún día y mide cuánto
+  has subido desde «¿esto qué es?» hasta «un flujo de diagnóstico de 60 segundos».</p>
+
+  <h2>Comprueba que lo retienes</h2>
+  <div class="quiz">
+    <div class="q" data-answer="0">
+      <p class="prompt">1. ¿Qué hace <code>grep 'x' f.txt</code>? (lección 1)</p>
+      <button class="opt">Muestra las líneas con x</button>
+      <button class="opt">Borra las líneas con x</button>
+      <button class="opt">Cuenta las letras x</button>
+    </div>
+    <div class="q" data-answer="2">
+      <p class="prompt">2. Sobre el log con timestamps, ¿qué macha <code>^INFO</code>? (lección 2)</p>
+      <button class="opt">Las líneas con INFO al inicio</button>
+      <button class="opt">Las líneas con INFO al final</button>
+      <button class="opt">Ninguna línea del archivo</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">3. ¿Qué es <code>'*.svelte'</code> en <code>--include</code>? (lección 4)</p>
+      <button class="opt">Un glob de archivos</button>
+      <button class="opt">Una expresión regular</button>
+      <button class="opt">Un directorio fijo</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">4. ¿Qué muestra <code>-A 3</code>? (lección 4)</p>
+      <button class="opt">Tres líneas después</button>
+      <button class="opt">Tres líneas antes</button>
+      <button class="opt">Tres segundos más</button>
+    </div>
+    <div class="q" data-answer="0">
+      <p class="prompt">5. ¿Qué trae <code>grep -v 'x'</code>? (lección 5)</p>
+      <button class="opt">Todo salvo el patrón</button>
+      <button class="opt">Solo lo que macha</button>
+      <button class="opt">Nada del archivo</button>
+    </div>
+    <p class="score">Aciertos: 0 / 0</p>
+  </div>
+
+  <div class="primary-source">
+    <h3>Lee la fuente</h3>
+    <p>Para seguir mejorando: <a href="https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md">ripgrep GUIDE</a>
+    (tu herramienta de ahora en adelante) y <a href="https://github.com/jlevy/the-art-of-command-line">The Art of Command Line</a>
+    para los pipes del día a día. Tu chuleta siempre a mano: <a href="../reference/0001-cheatsheet-basico.html">regex y filtros</a>.</p>
+  </div>
+
+  <div class="note">
+    <strong>Felicidades.</strong> Terminaste el curso. Piensa en tu pregunta de <code>rg</code> sin <code>-r</code>:
+    ya sabes que nació recursivo porque esto que acabas de hacer es su razón de ser.
+    <strong>¿Alguna duda pendiente?</strong> Pregúntale a tu agente-profesor — y si un día quieres llevar esto a otro nivel,
+    atrévete a preguntar en <a href="https://www.reddit.com/r/commandline/">r/commandline</a> qué trucos usa la gente con grep en su trabajo real.
+  </div>
+
+  <footer class="lesson-links">
+    <a href="0005-filtra-la-salida.html">← Lección 5: filtra la salida</a> ·
+    <a href="../reference/0001-cheatsheet-basico.html">Chuleta →</a>
+  </footer>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>
