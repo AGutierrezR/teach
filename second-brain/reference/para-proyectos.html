@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencia · PARA y proyectos</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Referencia rápida · imprimible</div>
+  <h1>Organización y proyectos (PARA)</h1>
+  <p class="subtitle">Dos sistemas: red de nodos (conocimiento, por enlaces) y cajones PARA (accionable, por ubicación). Para lo accionable que no es conocimiento.</p>
+
+  <h2>Los cuatro cajones</h2>
+  <table>
+    <tr><th>Cajón</th><th>Qué vive ahí</th><th>¿Acaba?</th></tr>
+    <tr><td><strong>P</strong>rojects</td><td>Objetivo con resultado definido y varias acciones.</td><td>Sí, y se archiva.</td></tr>
+    <tr><td><strong>A</strong>reas</td><td>Responsabilidad continua sin meta de acabado.</td><td>No. Nunca se archiva.</td></tr>
+    <tr><td><strong>R</strong>esources</td><td>Temas e intereses a los que vuelves.</td><td>No. Se consulta.</td></tr>
+    <tr><td><strong>A</strong>rchive</td><td>Lo que ya no es activo.</td><td>— Inactivo.</td></tr>
+  </table>
+
+  <h2>Dónde vive cada cajón en org</h2>
+  <table>
+    <tr><th>Cajón</th><th>En org</th></tr>
+    <tr><td>Projects</td><td>Cabeceras en <code>~/org/proyectos.org</code> (o archivo por proyecto si es grande) / nodos con <code>:ID:</code>.</td></tr>
+    <tr><td>Areas</td><td>Cabeceras en <code>~/org/areas.org</code>.</td></tr>
+    <tr><td>Resources</td><td>Cabeceras en <code>recursos.org</code> o nodos roam con MOC.</td></tr>
+    <tr><td>Archive</td><td>Archivos <code>*_archive</code> generados por <kbd>Space O $</kbd>.</td></tr>
+  </table>
+
+  <h2>El proyecto</h2>
+  <ul>
+    <li>Es una <strong>cabecera contenedora</strong>, no un formato especial.</li>
+    <li>No lleva palabra clave propia: las <strong>acciones</strong> (hijos) llevan <code>TODO</code>/<code>NEXT</code>.</li>
+    <li>Sí lleva fechas: <code>DEADLINE</code> (entrega) y <code>SCHEDULED</code> (trabajo).</li>
+    <li>Regla de la agenda: "proyecto" por defecto = cabecera de <strong>nivel 2</strong> (vista <kbd>#</kbd> de proyectos encallados).</li>
+  </ul>
+
+  <h2>¿Cabecera o nodo?</h2>
+  <table>
+    <tr><th>Si el proyecto…</th><th>Usa</th></tr>
+    <tr><td>Son solo acciones que se acaban</td><td>Cabecera bajo un archivo (<code>* Proyectos</code>).</td></tr>
+    <tr><td>Acumula notas, investigas, dura meses</td><td><strong>Nodo</strong> con <code>:ID:</code> (crear con <kbd>Space O m f</kbd>).</td></tr>
+  </table>
+
+  <div class="org-example">#+title: Renovar el baño            <span class="cm">&lt;- patrón B: nodo</span>
+#+filetags: proyecto
+* TODO Desmontar mueble
+* NEXT Pedir presupuestos
+[[id:8f3a…][Notas sobre azulejos]]</div>
+
+  <h2>Cierre</h2>
+  <div class="org-example">Acciones DONE → proyecto DONE → <span class="hl">Space O $</span> (archivar)
+Áreas: nunca DONE, nunca se archivan</div>
+
+  <h2>Regla de oro</h2>
+  <p><strong>Los proyectos viven en un sitio; las ideas viven conectadas a otras ideas.</strong> Conocimiento al grafo (lecciones 01–05), accionable a los cajones (esta tarjeta), terminado al archive.</p>
+
+  <p class="ref-link"><a href="https://fortelabs.com/blog/para/">↗ Fuente: Tiago Forte · The PARA Method</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="../lessons/0007-organizacion-para-proyectos.html">← Lección 07</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">Referencia</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

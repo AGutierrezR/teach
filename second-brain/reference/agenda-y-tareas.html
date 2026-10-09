@@ -91,6 +91,16 @@
 }</div>
   <p>Sin esto, los destinos por defecto son las cabeceras del <strong>buffer actual</strong>. Con <code>max_level</code>, refile cruza todos tus archivos de agenda.</p>
 
+  <h2>Archivar (tareas hechas)</h2>
+  <p>No se borran: se archivan. Conservan <code>CLOSED:</code> y ganan <code>ARCHIVE_TIME</code>, <code>ARCHIVE_FILE</code>, <code>ARCHIVE_OLPATH</code>. Siguen siendo buscables y enlazables.</p>
+  <table>
+    <tr><th>Atajo / comando</th><th>Acción</th></tr>
+    <tr><td><kbd>Space O $</kbd></td><td>Archivar el subtree actual.</td></tr>
+    <tr><td><kbd>$</kbd> (agenda)</td><td>Archivar la entrada bajo el cursor.</td></tr>
+    <tr><td><code>:Org archive_all_done</code></td><td>Barrido: archiva hijos sin TODOs abiertos.</td></tr>
+  </table>
+  <p>Destino por defecto: <code>nota.org</code> → <code>nota.org_archive</code> (<code>archive_location = "%s_archive::"</code>). En un proyecto vivo puedes dejar los <code>DONE</code>; al cerrar el proyecto, archívalo.</p>
+
   <h2>Comandos <code>:Org</code></h2>
   <table>
     <tr><th>Comando</th><th>Acción</th></tr>

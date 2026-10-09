@@ -8,6 +8,8 @@ Vocabulario canónico de este workspace. Todas las lecciones se adhieren a estos
 Un archivo `.org` (nivel archivo) o un headline que tiene una propiedad `:ID:` propia. Es la unidad atómica de la red. Sin `:ID:` no es un nodo.
 _Avoid_: Nota (ambiguo: "nota" también es el contenido; decir "nodo" cuando hablamos de la unidad de la red).
 
+> **`:ID:` vs directorio roam:** `:ID:` es identidad (propiedad nativa de org, clara en cualquier archivo). **Nodo roam** es lo que indexa el grafo: los `.org` bajo el directorio de roam (por defecto `~/org/roam`, `extensions.roam.directory`). Cualquier cabecera/archivo puede tener `:ID:` fuera de ese directorio (tareas en `refile.org`, un proyecto en `proyectos.org`, un archivo `..._archive`) y sus enlaces `id:` siguen resolviendo — el índice de IDs de org.nvim escanea los archivos de agenda, sus archivos de archivo y `id.extra_files`. Pero las herramientas roam (buscar nodo, backlinks, grafo, `roam_capture`) solo ven lo que vive en el directorio roam. Regla: **`:ID:` = "tengo identidad"; roam = "vivo en `~/org/roam` y me indexa el grafo"**.
+
 **ID**:
 La propiedad `:ID:` (en Neovim, un UUID) que identifica unívocamente a un nodo. Es el pegamento de la red: los enlaces apuntan a IDs, no a rutas de archivo.
 _Avoid_: UUID, identificador (usar "ID" siempre).
@@ -76,6 +78,10 @@ _Avoid_: Bandeja, pendientes.
 Mover un subtree ya escrito desde donde está (p. ej. el inbox) a su sitio definitivo. `<leader>Or`.
 _Avoid_: Mover, archivar (archivar es cosa distinta).
 
+**Archivar**:
+Sacar un subtree terminado de su archivo de trabajo y guardarlo en un archivo aparte (`*_archive`), sin borrarlo. Conserva el historial (`CLOSED:`, propiedades `ARCHIVE_*`) y sigue siendo buscable/enlazable. `<leader>O$`, o `$` en la agenda. Distinto de refile (que mueve, no retira de la vista).
+_Avoid_: Borrar, eliminar, papelera.
+
 **Dailies** (notas diarias):
 Un archivo de nodo por día, donde capturar el día a día. `<leader>Omd…`.
 _Avoid_: Diario, journal (aunque "journal" se usa, aquí decimos "dailies").
@@ -104,8 +110,26 @@ _Avoid_: Historial, log.
 
 ## Organización accionable (PARA)
 
+**Proyecto**:
+Una cabecera contenedora que agrupa acciones hacia un resultado definido. No lleva palabra clave propia (la llevan sus hijos); sí puede llevar `DEADLINE`/`SCHEDULED`. Al cerrarse, se marca DONE y se archiva. Puede ser cabecera en un archivo o un nodo con `:ID:` (si genera conocimiento).
+_Avoid_: Tarea grande, objetivo.
+
+**Área**:
+Responsabilidad continua sin meta de acabado (salud, finanzas, un producto en evolución). Nunca se marca DONE ni se archiva; su <em>contenido</em> sí se archiva.
+_Avoid_: Proyecto eterno, responsabilidad.
+
 **PARA**:
 Método de Tiago Forte: **P**rojects, **A**reas, **R**esources, **A**rchive. Organiza lo *accionable*, no el conocimiento. Convive con org-roam, que organiza el conocimiento por enlaces.
 _Avoid_: Sistema de carpetas.
 
 > **Aviso de tensión (importante):** PARA organiza por *ubicación* (jerarquía). Org-roam organiza por *enlaces* (red). No son enemigos, pero mezclarlos sin entender la diferencia es la causa #1 de que un segundo cerebro se pudra.
+
+## Trabajo en ciclos
+
+**Sprint / trimestre** (en trabajo por ciclos):
+El sprint es un *proyecto* finito (se archiva al cerrar); el trimestre, la capa de organización y memoria entre el producto y los sprints. El producto en evolución es un *área*, no un proyecto.
+_Avoid_: Fase, milestone.
+
+**Fuente de verdad** (source of truth):
+La regla de no duplicar: el estado de cada ticket vive en el tracker del equipo (Jira/GitLab); el segundo cerebro guarda decisiones, contexto y aprendizajes referenciando tickets por ID/URL.
+_Avoid_: Sincronizar, duplicado.

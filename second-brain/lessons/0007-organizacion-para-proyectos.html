@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · Organización y proyectos (PARA) — Second Brain</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Lección 07 · Organización</div>
+  <h1>Organización y proyectos (PARA)</h1>
+  <p class="subtitle">Tu sistema tiene dos organizaciones: la <strong>red de nodos</strong> (conocimiento, por enlaces) y los <strong>cajones</strong> (lo accionable, por ubicación). Para lo accionable que no es conocimiento existe <strong>PARA</strong>, y esta lección te enseña dónde vive cada cosa — sobre todo, qué es un <strong>proyecto</strong> y cómo se trata.</p>
+
+  <h2><span class="num">00</span>Antes de empezar: recuerda</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué organiza el conocimiento en tu sistema?</div>
+    <button class="opt" data-correct="false">Las carpetas del disco</button>
+    <button class="opt" data-correct="true">Los enlaces del grafo</button>
+    <button class="opt" data-correct="false">El orden alfabético</button>
+    <button class="opt" data-correct="false">Los colores de los tags</button>
+    <div class="explain">Las ideas se organizan por enlaces (nodos → MOCs → red), no por dónde están guardadas.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué diferencia un MOC de un proyecto?</div>
+    <button class="opt" data-correct="false">Uno es lista, otro es tabla</button>
+    <button class="opt" data-correct="false">Uno es archivo, otro es carpeta</button>
+    <button class="opt" data-correct="true">MOC enlaza ideas; proyecto, entregables</button>
+    <button class="opt" data-correct="false">MOC es un nodo; proyecto, un tag</button>
+    <div class="explain">El MOC cura conocimiento (lección 03); el proyecto agrupa acciones hacia un resultado. Se parecen en forma y se distinguen en función.</div>
+  </div>
+
+  <h2><span class="num">01</span>El problema: ya tienes dos organizaciones</h2>
+
+  <p>En la lección 01 viste tu esqueleto tipo PARA en <code>init.org</code> y el aviso: <strong>los proyectos viven en un sitio; las ideas viven conectadas a otras ideas.</strong> Eso es porque son dos sistemas distintos, y cada uno sirve para una cosa:</p>
+
+  <table>
+    <tr><th></th><th>Red de nodos (org-roam)</th><th>Cajones (PARA)</th></tr>
+    <tr><td>Organiza</td><td>Conocimiento</td><td>Lo accionable</td></tr>
+    <tr><td>Con qué</td><td>Enlaces <code>id:</code></td><td>Ubicación (archivo/cabecera)</td></tr>
+    <tr><td>Pregunta que responde</td><td>"¿Con qué ideas se relaciona esto?"</td><td>"¿Dónde se hace / guarda esto?"</td></tr>
+    <tr><td>Unidad</td><td>Nodo, MOC</td><td>Proyecto, Área</td></tr>
+  </table>
+
+  <p>El fallo clásico es tratar el conocimiento con cajones (decidir "¿en qué carpeta?" para cada idea) o lo accionable con enlaces. No es "uno u otro": es <strong>cada cosa en su sistema</strong>. El resto de la lección es PARA: para lo accionable.</p>
+
+  <h2><span class="num">02</span>PARA, de Tiago Forte</h2>
+
+  <p>Para organizar lo accionable por ubicación, PARA tiene cuatro cajones. La pregunta que los separa es <strong>"¿esto tiene una meta de acabado?"</strong>:</p>
+
+  <table>
+    <tr><th>Cajón</th><th>Qué vive ahí</th><th>¿Acaba?</th></tr>
+    <tr><td><strong>P</strong>rojects</td><td>Objetivos con resultado definido y varias acciones: "mudanza", "rediseñar la web".</td><td>Sí, y se archiva.</td></tr>
+    <tr><td><strong>A</strong>reas</td><td>Responsabilidades continuas sin meta de acabado: "salud", "finanzas", "casa".</td><td>No. Se mantiene, nunca se da por cerrada.</td></tr>
+    <tr><td><strong>R</strong>esources</td><td>Temas e intereses a los que vuelves: "recetas", "fotografía", una fuente.</td><td>No. Se consulta.</td></tr>
+    <tr><td><strong>A</strong>rchive</td><td>Lo que ya no es activo.</td><td>— Inactivo.</td></tr>
+  </table>
+
+  <div class="callout">
+    <span class="label">Área vs proyecto</span>
+    <p>"Mantener mi casa" es un <strong>área</strong> (nunca termina). "Renovar el baño" es un <strong>proyecto</strong> (termina, y cuando termina se archiva). La trampa: tratar áreas como proyectos infinitos, o proyectos como áreas que nunca se cierran.</p>
+  </div>
+
+  <h2><span class="num">03</span>Cómo se ve en org</h2>
+
+  <p>Un cajón no es más que un archivo (o una cabecera). Propuesta mínima que convive con tus nodos:</p>
+
+  <div class="org-example"><span class="cm">~/org/proyectos.org</span>
+* Mudanza
+** TODO Buscar empresa de mudanza
+** NEXT Empaquetar libros
+* Renovar el baño
+** DONE Desmontar mueble
+
+<span class="cm">~/org/areas.org</span>
+* Casa / mantenimiento
+** TODO Revisar la caldera antes del invierno
+** NEXT Limpiar bajantes
+
+<span class="cm">Conocimiento → nodos en ~/org/roam/ (lecciones 01–05)</span>
+<span class="cm">Lo terminado → archivos *_archive (lección 06)</span></div>
+
+  <p><strong>Recursos</strong> pueden ser cabeceras en un <code>recursos.org</code> o, si son temas de los que tomas notas, directamente nodos roam con un MOC. <strong>Archive</strong> en nuestro sistema son los archivos <code>*_org_archive</code> que ya usas: fuera de la vista, no borrados.</p>
+
+  <h2><span class="num">04</span>El proyecto, de cerca</h2>
+
+  <p>Un proyecto es una <strong>cabecera que agrupa acciones</strong>. No es un formato especial. Dos reglas que no son obvias:</p>
+
+  <ul>
+    <li>El proyecto es un <strong>contenedor</strong>: no lleva palabra clave propia. Las <strong>acciones</strong> (sus hijos) son las que llevan <code>TODO</code>/<code>NEXT</code>.</li>
+    <li>Sí puede llevar fechas: un <code>DEADLINE</code> (cuándo se entrega) y un <code>SCHEDULED</code> (cuándo lo trabajas).</li>
+  </ul>
+
+  <p>¿Y dónde vive? Depende de si va a producir conocimiento además de acciones:</p>
+
+  <table>
+    <tr><th>Si el proyecto…</th><th>Usa</th><th>Para qué</th></tr>
+    <tr><td>Son solo acciones que se acaban</td><td>Cabecera en <code>proyectos.org</code> (u otro archivo)</td><td>Refile a esa cabecera; se archiva al cerrar.</td></tr>
+    <tr><td>Acumula notas, investigas, dura meses</td><td><strong>Nodo</strong> (archivo con <code>:ID:</code>)</td><td>Enlazarlo con el grafo y guardar sus notas dentro.</td></tr>
+  </table>
+
+  <div class="org-example"><span class="cm">Proyecto tipo B (nodo):</span>
+#+title: Renovar el baño
+#+filetags: proyecto
+* TODO Desmontar mueble
+* NEXT Pedir presupuestos
+[[id:8f3a…][Notas sobre azulejos]]</div>
+
+  <p>Con el patrón B, el nodo-proyecto se crea con <kbd>Space O m f</kbd> (lección 01) y sus tareas son cabeceras dentro de él.</p>
+
+  <h2><span class="num">05</span>Cerrar y archivar</h2>
+
+  <p>Cuando todas las acciones estén <code>DONE</code>, el proyecto termina: marca su cabecera como <code>DONE</code> y <strong>archívala</strong> (<kbd>Space O $</kbd>, lección 06). Ese es el cajón <strong>Archive</strong> de PARA, hecho con lo que ya tienes.</p>
+
+  <div class="callout warn">
+    <span class="label">Las áreas nunca se archivan</span>
+    <p>Una <strong>área</strong> no tiene meta de acabado: no se le marca <code>DONE</code> ni se archiva. Su contenido cambia (tareas hechas se archivan), pero la cabecera-área se queda. El <code>#</code> de la agenda (proyectos encallados) tampoco debe listarlas: es cosa de proyectos.</p>
+  </div>
+
+  <h2><span class="num">06</span>Compruébalo (recuperación)</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué es un proyecto en org?</div>
+    <button class="opt" data-correct="false">Un archivo con extensión propia</button>
+    <button class="opt" data-correct="true">Una cabecera que agrupa acciones</button>
+    <button class="opt" data-correct="false">Un enlace entre nodos</button>
+    <button class="opt" data-correct="false">Un estado de la tarea</button>
+    <div class="explain">Es una cabecera contenedora. Las acciones (hijos) llevan las palabras clave; el proyecto se archiva al cerrarse.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué hace un <strong>área</strong>?</div>
+    <button class="opt" data-correct="false">Se cierra y se archiva</button>
+    <button class="opt" data-correct="true">Nunca se marca DONE</button>
+    <button class="opt" data-correct="false">Solo guarda enlaces</button>
+    <button class="opt" data-correct="false">Se borra al terminar</button>
+    <div class="explain">Un área es una responsabilidad continua: no tiene meta de acabado, así que nunca se cierra.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">Proyecto con notas, investigación y meses de vida:</div>
+    <button class="opt" data-correct="false">Una etiqueta de color</button>
+    <button class="opt" data-correct="false">Una cabecera de agenda</button>
+    <button class="opt" data-correct="true">Un nodo (archivo con ID)</button>
+    <button class="opt" data-correct="false">Un archivo de intereses</button>
+    <div class="explain">Si el proyecto genera conocimiento además de acciones, hazlo nodo para poder enlazarlo con el grafo.</div>
+  </div>
+
+  <h2><span class="num">07</span>Práctica</h2>
+  <ul class="checklist" data-persist="lesson-07">
+    <li>Crea <code>~/org/proyectos.org</code> y <code>~/org/areas.org</code> (o esas cabeceras en un archivo que ya uses).</li>
+    <li>Lleva una tarea real de la agenda a un proyecto con <kbd>Space O r</kbd>.</li>
+    <li>Comprueba que el contenedor-proyecto no lleva <code>TODO</code>; solo sus acciones.</li>
+    <li>Ponle <kbd>Space O d</kbd> (DEADLINE) al proyecto, no a cada tarea.</li>
+    <li>Elige uno de tus proyectos con futuro de notas y conviértelo en nodo (<kbd>Space O m f</kbd>).</li>
+    <li>Archiva un proyecto cerrado con <kbd>Space O $</kbd> y comprueba su <code>*_archive</code>.</li>
+    <li>Identifica un área tuya y anota su cabecera: esa nunca se cierra.</li>
+  </ul>
+
+  <div class="primary">
+    <span class="label">Fuentes primarias</span>
+    <p class="title">1. Tiago Forte, <a href="https://fortelabs.com/blog/para/">“The PARA Method”</a></p>
+    <p>Definición original de Projects / Areas / Resources / Archive.</p>
+    <p class="title">2. <a href="https://fortelabs.com/blog/para-method-a-detailed-guide/">“The PARA Method: A Detailed Guide”</a></p>
+    <p>Problemas "para nunca" y ejemplos de cada categoría.</p>
+  </div>
+
+  <div class="ask">
+    <p><strong>¿Te atascas o algo no cuadra?</strong> Pregúntame. Si quieres, aplico a tu config un <code>refile.targets</code> apuntando a <code>projects/areas</code>, o te diseño la micro-estructura de tu área de trabajo (siguiente lección).</p>
+  </div>
+
+  <p class="ref-link"><a href="../reference/para-proyectos.html">↗ Referencia: PARA y proyectos</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="0006-agenda-y-tareas.html">← 06 · Agenda y tareas</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <a class="nav-next" href="0008-organiza-tu-trabajo.html">08 · Organiza tu trabajo →</a>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

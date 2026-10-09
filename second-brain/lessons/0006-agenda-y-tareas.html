@@ -158,7 +158,42 @@
     <p><strong>Capturar</strong> al inbox (<kbd>Space O c</kbd>) → <strong>procesar</strong>: si es acción, marcarla <code>TODO</code> y poner fecha (<kbd>Space O s</kbd>) → <strong>refile</strong> a su proyecto (<kbd>Space O r</kbd>) → <strong>trabajar</strong> desde la agenda (<kbd>Space O a</kbd> <kbd>n</kbd>).</p>
   </div>
 
-  <h2><span class="num">05</span>Tu configuración (recomendada)</h2>
+  <h2><span class="num">05</span>¿Y lo que ya está hecho?</h2>
+
+  <p>Terminas una tarea y piensas: ¿la borro? <strong>No.</strong> Una tarea cerrada guarda el <code>CLOSED:</code>, la nota que le pusiste, enlaces y tiempos. Eso es <em>historial</em>, y sirve para las revisiones. Se <strong>archiva</strong>, no se borra.</p>
+
+  <div class="callout">
+    <span class="label">Tarea ≠ nota</span>
+    <p>Una <strong>tarea</strong> es ejecución: se cierra y pasa a la historia. Una <strong>nota/nodo</strong> es conocimiento: se queda. Si una tarea te dejó una idea que vale, esa idea va a una nota permanente o un MOC (lección 03), no vive dentro de la tarea.</p>
+  </div>
+
+  <p>Según dónde esté la tarea terminada:</p>
+
+  <table>
+    <tr><th>Situación</th><th>Qué hacer</th></tr>
+    <tr><td><code>DONE</code>/<code>CANCELLED</code> dentro de un <strong>proyecto vivo</strong></td><td><strong>Déjala.</strong> Da contexto y progreso; org ya la oculta de la agenda (los estados hechos no salen en la lista de TODOs).</td></tr>
+    <tr><td>Terminada y aún en el <strong>inbox</strong></td><td>Procésala o archívala: el inbox es una cola, no un cementerio.</td></tr>
+    <tr><td>El <strong>proyecto entero</strong> terminó</td><td><strong>Archiva</strong> el subtree.</td></tr>
+    <tr><td>Ruido que quedó en nada</td><td>Borrar está bien. <code>CANCELLED</code> es para "no lo hago y quiero constancia".</td></tr>
+  </table>
+
+  <p>Archivar saca el subtree de tu archivo de trabajo y lo guarda aparte, sin perder su registro:</p>
+
+  <table>
+    <tr><th>Atajo / comando</th><th>Acción</th></tr>
+    <tr><td><kbd>Space O $</kbd></td><td>Archiva el subtree actual.</td></tr>
+    <tr><td><kbd>$</kbd> (en agenda)</td><td>Archiva la entrada bajo el cursor.</td></tr>
+    <tr><td><code>:Org archive_all_done</code></td><td>Barrido: archiva los hijos sin TODOs abiertos.</td></tr>
+  </table>
+
+  <p>El destino por defecto es <code>nota.org</code> → <code>nota.org_archive</code> (<code>archive_location = "%s_archive::"</code>). Sales de la agenda y del ruido, pero no pierdes nada: la entrada conserva su <code>CLOSED:</code> y gana propiedades <code>ARCHIVE_TIME</code>, <code>ARCHIVE_FILE</code>, <code>ARCHIVE_OLPATH</code>… Y lo importante: <strong>sigue siendo buscable y enlazable</strong> (los <code>id:</code> de los nodos archivados se siguen indexando).</p>
+
+  <div class="callout warn">
+    <span class="label">En la revisión semanal</span>
+    <p>Procesa el inbox y dedica un minuto a <code>:Org archive_all_done</code> sobre tus proyectos cerrados. Así lo viejo sale de la vista sin perder su historia.</p>
+  </div>
+
+  <h2><span class="num">06</span>Tu configuración (recomendada)</h2>
 
   <p>Todo funciona sin tocar nada. Para sacarle partido, añade a <code>org.lua</code> una versión más rica de las palabras clave, registro al cerrar y el refile de arriba:</p>
 
@@ -171,7 +206,7 @@
 
   <p>Con esto: <kbd>Space O S</kbd> ofrece <em>TODO / NEXT / WAITING / DONE / CANCELLED</em> con tecla rápida; marcar <code>DONE</code> deja un <code>CLOSED:</code>; y refile ya cruza archivos. Si prefieres empezar simple, deja los keywords por defecto y aplica solo el <code>refile</code>.</p>
 
-  <h2><span class="num">06</span>Compruébalo (recuperación)</h2>
+  <h2><span class="num">07</span>Compruébalo (recuperación)</h2>
 
   <div class="quiz">
     <div class="q">¿Qué convierte una nota en tarea?</div>
@@ -209,7 +244,16 @@
     <div class="explain">Refile mueve el subtree del inbox a la cabecera destino, cerrando el bucle captura → procesado.</div>
   </div>
 
-  <h2><span class="num">07</span>Práctica</h2>
+  <div class="quiz">
+    <div class="q">¿Qué haces con una tarea <code>DONE</code>?</div>
+    <button class="opt" data-correct="false">Borrarla del archivo</button>
+    <button class="opt" data-correct="false">Dejarla siempre en la agenda</button>
+    <button class="opt" data-correct="true">Archivarla si el proyecto cerró</button>
+    <button class="opt" data-correct="false">Convertirla en nodo permanente</button>
+    <div class="explain">No se borra: se archiva (conserva <code>CLOSED:</code> y el rastro). En un proyecto vivo puede quedarse; al cerrarse, se archiva.</div>
+  </div>
+
+  <h2><span class="num">08</span>Práctica</h2>
   <ul class="checklist" data-persist="lesson-06">
     <li>En una cabecera, cicla el estado con <kbd>S-Right</kbd> y vuelve con <kbd>S-Left</kbd>.</li>
     <li>Crea una tarea <code>TODO</code> real y ponle <kbd>Space O s</kbd> (SCHEDULED) para mañana.</li>
@@ -219,6 +263,7 @@
     <li>Captura una acción al inbox y procésala con <kbd>Space O r</kbd> a su proyecto.</li>
     <li>Añade a <code>org.lua</code> el bloque recomendado y reinicia Neovim.</li>
     <li>Cierra una tarea con <code>DONE</code> y comprueba que aparece <code>CLOSED:</code>.</li>
+    <li>Archiva las tareas terminadas de un proyecto con <kbd>Space O $</kbd> y busca el archivo <code>*_archive</code>.</li>
   </ul>
 
   <div class="primary">
@@ -238,7 +283,7 @@
   <footer class="lesson-nav">
     <a class="nav-prev" href="0005-captura-de-nodos.html">← 05 · Captura de nodos</a>
     <a class="nav-index" href="../index.html">Índice</a>
-    <span class="nav-next is-off">07 · próximamente</span>
+    <a class="nav-next" href="0007-organizacion-para-proyectos.html">07 · Organización y proyectos (PARA) →</a>
   </footer>
 
 </div>

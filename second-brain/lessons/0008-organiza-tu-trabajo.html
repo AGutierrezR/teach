@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 · Organiza tu trabajo (producto, sprints, trimestres) — Second Brain</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Lección 08 · Organización · caso real</div>
+  <h1>Organiza tu trabajo (producto, sprints, trimestres)</h1>
+  <p class="subtitle">En el desarrollo web el "proyecto" no se acaba: <strong>evoluciona</strong> por sprints y trimestres. La lección 07 te dio la regla; esta te da el patrón concreto: el <strong>producto</strong> como área que nunca se archiva, y cada <strong>sprint</strong> como el proyecto finito que sí se cierra.</p>
+
+  <h2><span class="num">00</span>Antes de empezar: recuerda</h2>
+
+  <div class="quiz">
+    <div class="q">Un producto que sigue evolucionando, ¿qué es?</div>
+    <button class="opt" data-correct="false">Un proyecto de nivel 2</button>
+    <button class="opt" data-correct="true">Un área que se mantiene</button>
+    <button class="opt" data-correct="false">Un recurso consultable</button>
+    <button class="opt" data-correct="false">Una nota efímera</button>
+    <div class="explain">No tiene meta de acabado: es un área. Los sprints/trimestres son sus sub-proyectos finitos.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Cuándo se archiva un subtree con <kbd>Space O $</kbd>?</div>
+    <button class="opt" data-correct="false">Nada más capturarlo</button>
+    <button class="opt" data-correct="false">Siempre que tenga fechas</button>
+    <button class="opt" data-correct="true">Cuando ya no hace falta en la vista</button>
+    <button class="opt" data-correct="false">Cuando está recién creado</button>
+    <div class="explain">Archivar retira lo terminado de la vista conservando el historial (CLOSED:, ARCHIVE_*).</div>
+  </div>
+
+  <h2><span class="num">01</span>El patrón: área larga + sub-proyectos finitos</h2>
+
+  <p>Aplicas la lección 07 a tu caso: el producto es un <strong>área</strong> (no se archiva nunca), y cada <strong>sprint</strong> es un <strong>proyecto</strong> (termina, se archiva). Los <strong>trimestres</strong> son solo la capa de organización entre ambos, y te dan la memoria para la revisión trimestral.</p>
+
+  <table>
+    <tr><th>Pieza</th><th>Es</th><th>Fin de ciclo</th></tr>
+    <tr><td><code>#+title: Tienda online</code></td><td>Área (el producto)</td><td>Nunca se archiva</td></tr>
+    <tr><td><code>* 2026-Q3</code></td><td>Período</td><td>Se archiva cerrado el trimestre</td></tr>
+    <tr><td><code>** Sprint 34</code></td><td>Proyecto (del sistema)</td><td>Se marca DONE y se archiva</td></tr>
+    <tr><td><code>*** TODO …</code></td><td>Acciones</td><td>DONE individual</td></tr>
+  </table>
+
+  <div class="callout">
+    <span class="label">Y la vista de proyectos encallados funciona gratis</span>
+    <p>La agenda busca "proyecto" en cabeceras de <strong>nivel 2</strong> (por defecto). Con esta estructura, cada <code>** Sprint</code> es nivel 2: <kbd>Space O a</kbd> <kbd>#</kbd> te lista los sprints sin ninguna acción pendiente. Exactamente lo que quieres en el planning.</p>
+  </div>
+
+  <h2><span class="num">02</span>La estructura concreta</h2>
+
+  <p>Un nodo por producto (patrón B de la lección 07), creado con <kbd>Space O m f</kbd>:</p>
+
+  <div class="org-example">#+title: Tienda online (cliente X)
+#+filetags: trabajo producto
+
+* 2026-Q3
+** Sprint 34 (14–25 sep)
+   DEADLINE: &lt;2026-09-25 Fri&gt;
+*** NEXT Carrito persistente                          :feature:
+*** WAITING Rellenar datos del catálogo               :qa:
+*** DONE Migrar CSS a Tailwind                        :tech:
+    CLOSED: [2026-09-16 Wed]
+** Sprint 35
+   DEADLINE: &lt;2026-10-09 Fri&gt;
+*** TODO Cupones de descuento                         :feature:
+* 2026-Q4
+** Sprint 41
+   …</div>
+
+  <p>Detalles que hacen que se comporte bien:</p>
+  <ul>
+    <li>El sprint lleva el <code>DEADLINE</code> (fin de sprint). Las acciones, solo sus propios <code>SCHEDULED</code> si hace falta.</li>
+    <li>Los <strong>tags</strong> describen el tipo de trabajo: <code>:feature:</code>, <code>:bug:</code>, <code>:qa:</code>, <code>:tech:</code>… Sirven para filtrar la agenda.</li>
+    <li>Todo lo del trimestre queda bajo su cabecera <code>* 2026-Q3</code>: no hace falta buscar por fechas.</li>
+  </ul>
+
+  <h2><span class="num">03</span>Estados y tags a medida</h2>
+
+  <p>Tus estados actuales (<code>TODO | DONE</code>) piden demasiado pronto. Una versión para desarrollo:</p>
+
+  <div class="code-block">  todo_keywords = { "TODO(t) NEXT(n) IN_PROGRESS(i@) | DONE(d!) CANCELLED(c@) WAITING(w@)" },</div>
+
+  <ul>
+    <li><code>IN_PROGRESS</code> con <code>@</code>: al marcarlo pide una nota (qué estás haciendo).</li>
+    <li><code>WAITING</code> va <strong>tras la barra</strong>: es un estado parado (esperas a alguien), no pendiente tuyo. Así no lo cuenta como tarea abierta.</li>
+  </ul>
+
+  <p>Para ver solo tu trabajo del sprint, usa el filtro de la agenda: <kbd>Space O a</kbd> <kbd>m</kbd> <code>+trabajo -bugs</code> te da las acciones del producto sin los bugs, por ejemplo. Y <code>=pregunta</code> filtra por una propiedad concreta.</p>
+
+  <div class="callout warn">
+    <span class="label">No copies tu Jira/GitLab a org</span>
+    <p>Si tu equipo usa un tracker, el <strong>estado de la verdad</strong> (quién tiene qué, abierto/bloqueado) vive allí. Tu segundo cerebro guarda lo que el tracker no tiene: decisiones y por qué, bloqueos resueltos, contexto del cliente, aprendizajes. Referencia cada ticket por su <strong>ID/URL</strong> (un enlace o un <code>ROAM_REFS</code>), no duplicando su contenido. Duplicar es mantenimiento infinito y nace muerto.</p>
+  </div>
+
+  <h2><span class="num">04</span>El ciclo del sprint</h2>
+
+  <ol class="steps">
+    <li><strong>Planning:</strong> crea <code>** Sprint NN (fechas)</code> con su <code>DEADLINE</code>, y captura sus tareas al inbox durante el día.</li>
+    <li><strong>Procesado:</strong> refile cada tarea del inbox a su sprint (<kbd>Space O r</kbd>), con su estado y fechas.</li>
+    <li><strong>Día a día:</strong> trabajas desde <kbd>Space O a</kbd> <kbd>n</kbd> (agenda + TODOs). Lo que era contexto, va al nodo del producto o a un MOC.</li>
+    <li><strong>Fin de sprint:</strong> <code>:Org archive_all_done</code> y archiva el sprint (<kbd>Space O $</kbd>): cierra la cabecera <code>** Sprint 34</code> y se va a <code>tienda-online.org_archive</code>.</li>
+    <li><strong>Fin de trimestre:</strong> revisa el archivo archivado del trimestre (<code>ARCHIVE_TIME</code>, <code>ARCHIVE_OLPATH</code>) para el reporte. En el archivo vivo, deja abierta la cabecera del trimestre nuevo.</li>
+  </ol>
+
+  <div class="callout">
+    <span class="label">La arena es el archivo vivo</span>
+    <p>Solo el trimestre actual (y el próximo) vive en el archivo del producto. Lo viejo, en el <code>*_archive</code>. Así la vista de la agenda no se llena de sprints de hace dos trimestres, y el archivo queda corto y navegable.</p>
+  </div>
+
+  <h2><span class="num">05</span>Compruébalo (recuperación)</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué se archiva al cerrar un sprint?</div>
+    <button class="opt" data-correct="false">Todo el archivo del producto</button>
+    <button class="opt" data-correct="false">Solo el trimestre entero</button>
+    <button class="opt" data-correct="true">La cabecera del sprint</button>
+    <button class="opt" data-correct="false">Las notas de contexto</button>
+    <div class="explain">Se archiva la cabecera del sprint (nivel 2), no el nodo del producto ni sus notas.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Para qué sirve el tag <code>:bug:</code>?</div>
+    <button class="opt" data-correct="false">Para decorar la cabecera</button>
+    <button class="opt" data-correct="false">Para marcar la prioridad</button>
+    <button class="opt" data-correct="true">Para filtrar la agenda</button>
+    <button class="opt" data-correct="false">Para bloquear el archivo</button>
+    <div class="explain">Los tags permiten filtrar vistas de la agenda, p. ej. <kbd>Space O a</kbd> <kbd>m</kbd> <code>+trabajo -bugs</code>.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">Y el <strong>estado de cada ticket</strong>, ¿dónde vive?</div>
+    <button class="opt" data-correct="false">En tu archivo de producto</button>
+    <button class="opt" data-correct="false">En tus dailies</button>
+    <button class="opt" data-correct="true">En el tracker del equipo</button>
+    <button class="opt" data-correct="false">En los backlinks</button>
+    <div class="explain">Regla de la fuente de verdad: el tracker guarda el estado; tu cerebro guarda decisiones, contexto y aprendizajes.</div>
+  </div>
+
+  <h2><span class="num">06</span>Práctica</h2>
+  <ul class="checklist" data-persist="lesson-08">
+    <li>Crea el nodo de tu producto con <kbd>Space O m f</kbd> y los tags <code>trabajo producto</code>.</li>
+    <li>Añade las cabeceras <code>* 2026-Q4</code> y tu sprint actual con su <code>DEADLINE</code>.</li>
+    <li>Actualiza <code>todo_keywords</code> con <code>IN_PROGRESS(i@)</code> y <code>WAITING(w@)</code> tras la barra, y reinicia.</li>
+    <li>Refile 3 tareas reales de tu inbox al sprint.</li>
+    <li>Marca una tarea <code>WAITING</code> y comprueba que no aparece como pendiente en la lista global de TODOs.</li>
+    <li>Etiqueta un bug con <code>:bug:</code> y filtra <kbd>Space O a</kbd> <kbd>m</kbd> <code>+trabajo -bugs</code>.</li>
+    <li>Escoge un sprint terminado: <code>:Org archive_all_done</code> y archívalo; mira su <code>ARCHIVE_TIME</code>.</li>
+    <li>Aprueba la regla con tu equipo: el estado va al tracker, el "por qué" a tu cerebro.</li>
+  </ul>
+
+  <div class="primary">
+    <span class="label">Fuentes primarias</span>
+    <p class="title">1. <a href="https://org-nvim.com/manual/org-todo.html">org.nvim · Manual de TODO</a> — keywords, <code>@</code>/<code>!</code> y registro.</p>
+    <p class="title">2. <a href="https://org-nvim.com/manual/org-agenda.html">org.nvim · Manual de la agenda</a> — filtros tag/regexp y proyectos encallados.</p>
+    <p class="title">3. Tiago Forte, <a href="https://fortelabs.com/blog/para/">“The PARA Method”</a> — por qué un producto es un área y los sprints, proyectos.</p>
+  </div>
+
+  <div class="ask">
+    <p><strong>¿Te atascas o algo no cuadra?</strong> Pregúntame. Si quieres, aplico a tu <code>org.lua</code> la lista de keywords con <code>IN_PROGRESS</code>/<code>WAITING</code>, o te creo el nodo del producto y su estructura de trimestre/sprint.</p>
+  </div>
+
+  <p class="ref-link"><a href="../reference/organiza-tu-trabajo.html">↗ Referencia: producto, sprints y trimestres</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="0007-organizacion-para-proyectos.html">← 07 · Organización y proyectos (PARA)</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">09 · próximamente</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

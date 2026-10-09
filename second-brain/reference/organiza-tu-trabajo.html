@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencia · Producto, sprints y trimestres</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Referencia rápida · imprimible</div>
+  <h1>Organiza tu trabajo (producto, sprints, trimestres)</h1>
+  <p class="subtitle">El producto es un <strong>área</strong> (no se archiva); los sprints son los <strong>proyectos</strong> que sí se cierran; los trimestres, la capa de organización y memoria.</p>
+
+  <h2>La estructura</h2>
+  <div class="org-example">#+title: Tienda online (cliente X)
+#+filetags: trabajo producto
+
+* 2026-Q3
+** Sprint 34 (14–25 sep)
+   DEADLINE: &lt;2026-09-25 Fri&gt;
+*** NEXT Carrito persistente                          :feature:
+*** WAITING Rellenar datos del catálogo               :qa:
+*** DONE Migrar CSS a Tailwind                        :tech:
+    CLOSED: [2026-09-16 Wed]
+* 2026-Q4
+** Sprint 41
+   …</div>
+
+  <table>
+    <tr><th>Pieza</th><th>Es</th><th>Fin de ciclo</th></tr>
+    <tr><td><code>#+title:</code> del archivo</td><td>Área (producto)</td><td>Nunca se archiva</td></tr>
+    <tr><td><code>* 2026-Q3</code></td><td>Período</td><td>Se archiva el trimestre cerrado</td></tr>
+    <tr><td><code>** Sprint 34</code></td><td>Proyecto</td><td>DONE + archivar</td></tr>
+    <tr><td><code>*** TODO …</code></td><td>Acción</td><td>DONE individual</td></tr>
+  </table>
+
+  <h2>Estados a medida</h2>
+  <div class="code-block">todo_keywords = { "TODO(t) NEXT(n) IN_PROGRESS(i@) | DONE(d!) CANCELLED(c@) WAITING(w@)" }</div>
+  <p><code>@</code> pide una nota al entrar. <code>WAITING</code> va <strong>tras la barra</strong>: es un estado parado, no una tarea abierta.</p>
+
+  <h2>Tags y filtros</h2>
+  <table>
+    <tr><th>Tag sugerido</th><th>Tipo de trabajo</th></tr>
+    <tr><td><code>:feature:</code></td><td>Funcionalidad nueva.</td></tr>
+    <tr><td><code>:bug:</code></td><td>Corrección.</td></tr>
+    <tr><td><code>:qa:</code> / <code>:review:</code></td><td>Verificación / revisión.</td></tr>
+    <tr><td><code>:tech:</code></td><td>Deuda técnica / tooling.</td></tr>
+  </table>
+  <ul>
+    <li><kbd>Space O a</kbd> <kbd>m</kbd> <code>+trabajo -bugs</code>: producto sin bugs.</li>
+    <li><kbd>Space O a</kbd> <kbd>m</kbd> <code>+trabajo+feature</code>: solo features.</li>
+    <li><kbd>Space O a</kbd> <kbd>#</kbd>: sprints (nivel 2) sin ninguna acción pendiente.</li>
+  </ul>
+
+  <h2>El ciclo</h2>
+  <div class="org-example">Planning   <span class="cm">→</span> <span class="hl">Space O m f</span> nodo producto + <code>** Sprint NN</code> con DEADLINE
+Día a día  <span class="cm">→</span> <span class="hl">Space O c</span> captura al inbox → <span class="hl">Space O r</span> refile al sprint
+Trabajo    <span class="cm">→</span> <span class="hl">Space O a n</span> agenda + TODOs
+Fin sprint <span class="cm">→</span> <code>:Org archive_all_done</code> + <span class="hl">Space O $</span> archivar el sprint
+Revisión Q <span class="cm">→</span> leer <code>*_archive</code> del trimestre (ARCHIVE_TIME / ARCHIVE_OLPATH)</div>
+
+  <h2>La regla del tracker</h2>
+  <p><strong>El estado de cada ticket vive en el tracker del equipo</strong> (Jira/GitLab…). Tu segundo cerebro guarda decisiones, contexto, bloqueos resueltos y aprendizajes, referenciando los tickets por ID/URL (un enlace o <code>ROAM_REFS</code>). No dupliques tickets en org.</p>
+
+  <p class="ref-link"><a href="https://org-nvim.com/manual/org-agenda.html">↗ Fuente: manual oficial de org.nvim · Agenda</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="../lessons/0008-organiza-tu-trabajo.html">← Lección 08</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">Referencia</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>
