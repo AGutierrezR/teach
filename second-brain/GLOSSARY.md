@@ -84,6 +84,24 @@ _Avoid_: Diario, journal (aunque "journal" se usa, aquí decimos "dailies").
 Vista agregada de tareas con fechas (SCHEDULED/DEADLINE) de todos tus archivos org. `<leader>Oa`.
 _Avoid_: Calendario, planner.
 
+## Tareas y fechas
+
+**Estado / palabra clave** (keyword):
+Palabra al inicio de una cabecera que le da un estado (`TODO`, `NEXT`, `DONE`…). En `"TODO | DONE"`, lo anterior a `|` son estados *activos* y lo posterior, *hechos*. Una tarea es, simplemente, una cabecera con estado.
+_Avoid_: Etiqueta de tarea, flag.
+
+**SCHEDULED**:
+Fecha en la que *planeas trabajar* una tarea. La sitúa en la agenda pero no la "apremia".
+_Avoid_: Fecha de inicio, fecha de tarea.
+
+**DEADLINE**:
+Fecha en la que una tarea *vence*. La agenda avisa desde `deadline_warning_days` días antes (por defecto 14).
+_Avoid_: Límite, fecha de entrega.
+
+**Registro** (logging):
+Rastro que deja un cambio de estado o de fecha: una marca de tiempo (`!` / `CLOSED:`) o una nota (`@`). Se controla con `log_done`, `log_reschedule`, etc.
+_Avoid_: Historial, log.
+
 ## Organización accionable (PARA)
 
 **PARA**:

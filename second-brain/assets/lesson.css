@@ -148,7 +148,7 @@ kbd {
 
 /* --- Bloque de ejemplo org --------------------------------------------- */
 
-.org-example {
+.org-example, .code-block {
   font-family: var(--mono);
   font-size: 0.82rem;
   line-height: 1.55;
@@ -160,8 +160,8 @@ kbd {
   white-space: pre;
   overflow-x: auto;
 }
-.org-example .hl { color: var(--accent); font-weight: 700; }
-.org-example .cm { color: var(--ink-soft); font-style: italic; }
+.org-example .hl, .code-block .hl { color: var(--accent); font-weight: 700; }
+.org-example .cm, .code-block .cm { color: var(--ink-soft); font-style: italic; }
 
 /* --- Pasos / checklist -------------------------------------------------- */
 

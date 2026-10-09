@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencia · Plantillas de captura</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Referencia rápida · imprimible</div>
+  <h1>Plantillas de captura</h1>
+  <p class="subtitle">Config de <code>capture.templates</code> en org.nvim. Abrir menú: <kbd>Space O c</kbd>. Finalizar: <kbd>C-c C-c</kbd>. Abortar: <kbd>C-c C-k</kbd>.</p>
+
+  <h2>Estructura en <code>opts</code></h2>
+  <div class="code-block">capture = {
+  templates = {
+    KEY = {
+      description = "…",       -- etiqueta del menú
+      template    = "* %?\n %u", -- esqueleto
+      target      = "~/org/refile.org", -- destino ("", = default_notes_file)
+      headline    = "Inbox",   -- cabecera destino (se crea si falta)
+    },
+  },
+},</div>
+
+  <h2>Campos de una plantilla</h2>
+  <table>
+    <tr><th>Campo</th><th>Qué hace</th></tr>
+    <tr><td><code>description</code></td><td>Etiqueta en el menú de captura.</td></tr>
+    <tr><td><code>template</code></td><td>Texto; con <code>*</code> es un entry. Sin <code>*</code> se añade uno.</td></tr>
+    <tr><td><code>type</code></td><td><code>entry</code>, <code>item</code>, <code>checkitem</code>, <code>table-line</code>, <code>plain</code>.</td></tr>
+    <tr><td><code>target</code></td><td>Archivo, <code>""</code> (default), <code>clock</code>, o función.</td></tr>
+    <tr><td><code>headline</code></td><td>file+headline: cuelga bajo esa cabecera.</td></tr>
+    <tr><td><code>olp</code></td><td>file+olp: ruta de cabeceras que <em>deben existir</em>.</td></tr>
+    <tr><td><code>datetree</code></td><td>Árbol de fechas (<code>true</code> o <code>{ tree_type = "week" }</code>).</td></tr>
+    <tr><td><code>properties</code></td><td>Propiedades añadidas al entry.</td></tr>
+    <tr><td><code>immediate_finish</code></td><td>Finaliza sin abrir la ventana de captura.</td></tr>
+    <tr><td><code>unnarrowed</code></td><td>Editar el texto directamente en el archivo destino.</td></tr>
+  </table>
+
+  <h2>Escapes del <code>template</code></h2>
+  <table>
+    <tr><th>Escape</th><th>Inserta</th></tr>
+    <tr><td><code>%?</code></td><td>Posición del cursor.</td></tr>
+    <tr><td><code>%t</code> / <code>%T</code></td><td>Fecha activa / fecha y hora.</td></tr>
+    <tr><td><code>%u</code> / <code>%U</code></td><td>Fecha inactiva / fecha y hora.</td></tr>
+    <tr><td><code>%&lt;fmt&gt;</code></td><td>strftime, p. ej. <code>%&lt;%Y-%m-%d&gt;</code>.</td></tr>
+    <tr><td><code>%a</code></td><td>Enlace (anotación) al origen de la captura.</td></tr>
+    <tr><td><code>%i</code></td><td>Contenido inicial (la selección en Visual).</td></tr>
+    <tr><td><code>%x</code></td><td>Portapapeles.</td></tr>
+    <tr><td><code>%^{Texto}</code></td><td>Pregunta ese texto.</td></tr>
+    <tr><td><code>%^{Texto|a|b}</code></td><td>Pregunta con opciones a/b.</td></tr>
+    <tr><td><code>%^{PROP}p</code></td><td>Pregunta y guarda como propiedad <code>PROP</code>.</td></tr>
+    <tr><td><code>%\\1</code></td><td>La respuesta al 1.er prompt <code>%^{…}</code>.</td></tr>
+  </table>
+
+  <h2>Tus tres plantillas</h2>
+  <div class="code-block">capture = {
+  templates = {
+    n = { description = "Nota (a procesar)",
+          template = "* %?\n  %u\n  %a",
+          target = "~/org/refile.org", headline = "Inbox" },
+    t = { description = "Tarea",
+          template = "* TODO %?\n  %u\n  %a",
+          target = "~/org/refile.org", headline = "Tasks" },
+    r = { description = "Referencia",
+          template = "* %^{Título}\n  %u\n  %a\n  %^{URL}",
+          target = "~/org/refile.org", headline = "Inbox" },
+  },
+},</div>
+
+  <div class="callout warn">
+    <span class="label">Recordatorios</span>
+    <p>Tras editar <code>opts</code> hay que <strong>reiniciar Neovim</strong>. La clave (<code>n</code>/<code>t</code>/<code>r</code>) es lo que pulsas para elegir. La plantilla de referencia solo escribe la URL; <code>ROAM_REFS</code>/nodo es captura de roam (lección futura).</p>
+  </div>
+
+  <p class="ref-link"><a href="https://org-nvim.com/manual/org-capture.html">↗ Fuente: org.nvim · Manual de Capture</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="../lessons/0004-plantillas-de-captura.html">← Lección 04</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">Referencia</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

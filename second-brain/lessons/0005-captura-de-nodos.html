@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 · Captura de nodos (roam_capture) — Second Brain</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Lección 05 · Herramientas</div>
+  <h1>Captura de nodos (roam_capture)</h1>
+  <p class="subtitle">Tu captura actual deja una nota efímera en el inbox. Roam tiene su propio sistema de plantillas que crea <strong>el nodo directamente</strong>: un archivo con <code>#+title</code> e <code>:ID:</code>, sin pasar por el procesado.</p>
+
+  <h2><span class="num">00</span>Antes de empezar: recuerda</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué decide el campo target?</div>
+    <button class="opt" data-correct="false">Cuándo se guarda todo</button>
+    <button class="opt" data-correct="false">Qué texto se inserta</button>
+    <button class="opt" data-correct="true">Dónde aterriza la nota</button>
+    <button class="opt" data-correct="false">Quién creó el nodo</button>
+    <div class="explain">El <code>target</code> (más el <code>headline</code>) es el destino: archivo y cabecera.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué inserta el escape <code>%u</code>?</div>
+    <button class="opt" data-correct="false">Una fecha activa</button>
+    <button class="opt" data-correct="false">Un enlace entrante</button>
+    <button class="opt" data-correct="false">La selección visual</button>
+    <button class="opt" data-correct="true">Una fecha inactiva</button>
+    <div class="explain"><code>%u</code> es fecha inactiva (entre corchetes); <code>%t</code> es la activa (con ángulos).</div>
+  </div>
+
+  <h2><span class="num">01</span>Dos sistemas de captura</h2>
+
+  <p>Ya conoces el primero. El segundo es el de la extensión roam, y su unidad no es una línea, sino un <strong>nodo</strong>.</p>
+
+  <table>
+    <tr><th></th><th>Global (<code>capture.templates</code>)</th><th>Roam (<code>roam.capture_templates</code>)</th></tr>
+    <tr><td>Qué produce</td><td>Texto en un destino</td><td>Un nodo (archivo con <code>#+title</code> e <code>:ID:</code>)</td></tr>
+    <tr><td>Unidad</td><td>Nota efímera</td><td>Nota permanente</td></tr>
+    <tr><td>Escapes propios</td><td>—</td><td><code>${title}</code>, <code>${slug}</code>, <code>${id}</code></td></tr>
+    <tr><td>Atajo</td><td><kbd>Space O c</kbd></td><td><kbd>Space O m c</kbd></td></tr>
+  </table>
+
+  <div class="callout">
+    <span class="label">Regla de decisión</span>
+    <p><strong>¿Ya sé que es permanente?</strong> (una idea, una fuente) → captura de <strong>nodo</strong> (<kbd>Space O m c</kbd>). <strong>¿Aún no lo sé, o es algo del día?</strong> → captura <strong>efímera</strong> al inbox (<kbd>Space O c</kbd>).</p>
+  </div>
+
+  <h2><span class="num">02</span>Anatomía de una plantilla de nodo</h2>
+
+  <p>Se parecen a las que ya usas, con dos añadidos: <code>head</code> (lo que se escribe en la cabecera del archivo nuevo) y escapes con <code>${…}</code> que salen del nodo.</p>
+
+  <table>
+    <tr><th>Campo / escape</th><th>Qué es</th></tr>
+    <tr><td><code>target = "…-${slug}.org"</code></td><td>Genera el nombre de archivo del nodo.</td></tr>
+    <tr><td><code>head = "#+title: ${title}\n"</code></td><td>Escribe la cabecera del archivo nuevo.</td></tr>
+    <tr><td><code>${title}</code></td><td>El título que escribas al crear el nodo.</td></tr>
+    <tr><td><code>${slug}</code></td><td>El título en minúsculas, con <code>_</code> en vez de lo que no sea letra/número.</td></tr>
+    <tr><td><code>${id}</code></td><td>El ID (UUID) del nodo.</td></tr>
+    <tr><td><code>${pregunta=def}</code></td><td>Cualquier otro <code>${…}</code> te lo pregunta una vez.</td></tr>
+  </table>
+
+  <p>El destino no tiene por qué ser un archivo nuevo. Estas son las formas de <code>target</code> de roam:</p>
+
+  <table>
+    <tr><th>Forma</th><th>Para qué</th></tr>
+    <tr><td><code>"…-${slug}.org"</code></td><td>Un nodo nuevo (archivo propio).</td></tr>
+    <tr><td><code>{ "file+head", path, head }</code></td><td>Archivo nuevo con una cabecera concreta.</td></tr>
+    <tr><td><code>{ "file+olp", path, { "A", "B" } }</code></td><td>Bajo cabeceras que ya existen.</td></tr>
+    <tr><td><code>{ "node", "Título" }</code></td><td>Capturar <em>dentro</em> de un nodo existente.</td></tr>
+    <tr><td><code>{ "file+datetree", path, "day" }</code></td><td>Bajo un árbol de fechas.</td></tr>
+  </table>
+
+  <h2><span class="num">03</span>Tu configuración</h2>
+
+  <p>Hoy tienes <code>roam = true</code>. Cámbialo por una tabla, manteniendo el directorio donde ya viven tus nodos (<code>~/org/roam</code>):</p>
+
+  <div class="code-block">      roam = {
+        directory = "~/org/roam",
+        capture_templates = {
+          i = {
+            description = "Idea (nodo)",
+            template = "%?\n",
+            target = "%<%Y%m%d%H%M%S>-${slug}.org",
+            head = "#+title: ${title}\n",
+          },
+          m = {
+            description = "MOC (nodo)",
+            template = "Mi mapa de ${title}. Empezar aquí.\n%?\n* \n* \n",
+            target = "%<%Y%m%d%H%M%S>-moc-${slug}.org",
+            head = "#+title: MOC ${title}\n#+filetags: moc\n",
+          },
+        },
+      },</div>
+
+  <p>Con esto, <kbd>Space O m c</kbd> te ofrece <em>Idea (nodo)</em> y <em>MOC (nodo)</em>. Escribes el título, el cuerpo, y al finalizar nace un archivo nuevo en <code>~/org/roam</code> con su <code>#+title</code> y su <code>:ID:</code>.</p>
+
+  <div class="callout">
+    <span class="label">La plantilla de MOC</span>
+    <p>Fíjate en dos detalles: el <code>head</code> escribe <code>#+title: MOC ${title}</code> (así el nodo se llama "MOC …") y añade <code>#+filetags: moc</code>; y el cuerpo nace con la intro y dos grupos vacíos, listos para enlazar notas. Con esta plantilla, crear un MOC (lección 03) es una sola captura.</p>
+  </div>
+
+  <div class="callout warn">
+    <span class="label">Añadir más plantillas</span>
+    <p>Duplica el patrón para lo que necesites. Para fuentes, una clave <code>l</code> con tag propio en el <code>head</code>: <code>head = "#+title: ${title}\n#+filetags: literature\n"</code>.</p>
+  </div>
+
+  <div class="callout warn">
+    <span class="label">Verás una opción “default”</span>
+    <p>No es un error: la extensión trae una plantilla <code>d</code> de fábrica y org.nvim <em>fusiona</em> las plantillas en vez de reemplazarlas, así que <code>d</code> convive con las tuyas. Solo se <strong>redefine</strong> (misma clave <code>d</code>); no se borra. Detalle en la referencia.</p>
+  </div>
+
+  <h2><span class="num">04</span>Aplícalo</h2>
+  <ol class="steps">
+    <li>En <code>org.lua</code>, sustituye <code>roam = true</code> por el bloque de arriba.</li>
+    <li>Guarda y <strong>reinicia Neovim</strong>.</li>
+    <li>Pulsa <kbd>Space O m c</kbd>, elige <em>Idea (nodo)</em> y escribe un título (p. ej. <code>Prueba de captura de nodo</code>).</li>
+    <li>Escribe una frase en el cuerpo y finaliza con <kbd>C-c C-c</kbd>.</li>
+    <li>Abre el archivo nuevo: confirma que tiene <code>#+title:</code> y un <code>:ID:</code>.</li>
+    <li>Desde otro nodo, enlázalo con <kbd>Space O m i</kbd> y comprueba el backlink.</li>
+  </ol>
+
+  <h2><span class="num">05</span>Compruébalo (recuperación)</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué crea una plantilla de roam?</div>
+    <button class="opt" data-correct="false">Un texto en el inbox</button>
+    <button class="opt" data-correct="true">Un nodo con título</button>
+    <button class="opt" data-correct="false">Una tarea de agenda</button>
+    <button class="opt" data-correct="false">Un enlace al nodo</button>
+    <div class="explain">Un nodo: archivo con <code>#+title</code> e <code>:ID:</code>, listo para enlazarse.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Cuándo usas la captura de nodos?</div>
+    <button class="opt" data-correct="false">Cuando es una tarea</button>
+    <button class="opt" data-correct="false">Cuando hay que borrarlo</button>
+    <button class="opt" data-correct="true">Cuando ya es permanente</button>
+    <button class="opt" data-correct="false">Cuando dudo de todo</button>
+    <div class="explain">Si ya sabes que es una idea o fuente con futuro, créala como nodo; si no, captura efímera al inbox.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué escape sale del nodo?</div>
+    <button class="opt" data-correct="false">La fecha con %u</button>
+    <button class="opt" data-correct="false">El enlace con %a</button>
+    <button class="opt" data-correct="false">El cursor con %?</button>
+    <button class="opt" data-correct="true">El título con ${title}</button>
+    <div class="explain"><code>${title}</code>, <code>${slug}</code>, <code>${id}</code> los provee el nodo; los <code>%…</code> siguen siendo los de org-capture.</div>
+  </div>
+
+  <h2><span class="num">06</span>Práctica</h2>
+  <ul class="checklist" data-persist="lesson-05">
+    <li>Cambia <code>roam = true</code> por la tabla con <code>capture_templates</code>.</li>
+    <li>Reinicia Neovim y confirma que <kbd>Space O m c</kbd> ofrece <em>Idea (nodo)</em> y <em>MOC (nodo)</em>.</li>
+    <li>Crea un nodo real y verifica <code>#+title</code> e <code>:ID:</code> en el archivo.</li>
+    <li>Crea un <strong>MOC</strong> con la plantilla <code>m</code> y enlázale 2-3 notas.</li>
+    <li>Añade otra plantilla (<code>l</code>, literatura) con el tag <code>literature</code>.</li>
+    <li>Enlaza el nodo nuevo desde otro con <kbd>Space O m i</kbd> y mira el backlink.</li>
+    <li>Usa la captura de nodo para algo real esta semana (una idea que ya sabes que es permanente).</li>
+  </ul>
+
+  <div class="primary">
+    <span class="label">Fuentes primarias</span>
+    <p class="title">1. <a href="https://org-nvim.com/manual/org-extensions-roam.html">org.nvim · Manual de org-roam</a> — secciones “Capture templates” y “Choosing a node”.</p>
+    <p>Las formas de <code>target</code> y la plantilla por defecto. <br>
+    2. <a href="https://www.orgroam.com/manual.html">org-roam · §5 Getting Started</a> — el modelo de nodos y captura que org.nvim porta.</p>
+  </div>
+
+  <div class="ask">
+    <p><strong>¿Te atascas o algo no cuadra?</strong> Pregúntame. Si quieres, aplico el cambio a tu <code>org.lua</code>, o te diseño una plantilla con <code>target = { "node", "MOC …" }</code> para capturar directamente dentro de un MOC.</p>
+  </div>
+
+  <p class="ref-link"><a href="../reference/captura-de-nodos.html">↗ Referencia: captura de nodos</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="0004-plantillas-de-captura.html">← 04 · Plantillas de captura</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <a class="nav-next" href="0006-agenda-y-tareas.html">06 · Agenda y tareas →</a>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

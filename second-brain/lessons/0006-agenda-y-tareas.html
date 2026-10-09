@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 · Agenda y tareas — Second Brain</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Lección 06 · Herramientas</div>
+  <h1>Agenda y tareas</h1>
+  <p class="subtitle">Hasta ahora has capturado y creado notas. Muchas llevan dentro una <strong>acción</strong> ("llamar a…", "leer…", "decidir…"). Hoy conviertes esas líneas en <strong>tareas</strong> con fecha, y aprendes a verlas todas juntas en una vista: la <strong>agenda</strong>.</p>
+
+  <h2><span class="num">00</span>Antes de empezar: recuerda</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué hace una palabra clave TODO?</div>
+    <button class="opt" data-correct="false">Mueve el nodo de carpeta</button>
+    <button class="opt" data-correct="false">Crea el nodo en el índice</button>
+    <button class="opt" data-correct="true">Le da un estado a la cabecera</button>
+    <button class="opt" data-correct="false">Borra el nodo del grafo</button>
+    <div class="explain">Una palabra clave no es magia: marca la cabecera con un estado (<code>TODO</code>, <code>DONE</code>…). Las tareas son solo cabeceras con estado.</div>
+  </div>
+
+  <h2><span class="num">01</span>De nota a tarea: la palabra clave</h2>
+
+  <p>Una tarea no es un tipo especial de nota. Es una cabecera con una <strong>palabra clave</strong> delante:</p>
+
+  <div class="org-example"><span class="hl">TODO</span> Escribir el resumen del capítulo 3
+<span class="hl">TODO</span> Pedir cita con el dentista
+<span class="hl">DONE</span> Pagar la factura de la luz</div>
+
+  <p>Por defecto org.nvim trae solo dos estados: <code>TODO | DONE</code>. Se cambian con <code>todo_keywords</code>. La barra vertical <code>|</code> es la pieza clave: parte la lista de estados en dos grupos.</p>
+
+  <ul>
+    <li><strong>Antes de <code>|</code></strong> van los estados <strong>activos</strong> (pendientes): <code>TODO</code>, <code>NEXT</code>, <code>WAITING</code>…</li>
+    <li><strong>Después de <code>|</code></strong> van los estados <strong>hechos</strong> (terminados): <code>DONE</code>, <code>CANCELLED</code>…</li>
+  </ul>
+
+  <p>Con la lista <code>"TODO NEXT WAITING | DONE CANCELLED"</code>, cada palabra cae a un lado de la barra:</p>
+
+  <table>
+    <tr><th>Palabra</th><th>Lado del <code>|</code></th><th>Cuenta como</th></tr>
+    <tr><td><code>TODO</code></td><td>antes</td><td>pendiente</td></tr>
+    <tr><td><code>NEXT</code></td><td>antes</td><td>pendiente</td></tr>
+    <tr><td><code>WAITING</code></td><td>antes</td><td>pendiente</td></tr>
+    <tr><td><code>DONE</code></td><td>después</td><td>hecho</td></tr>
+    <tr><td><code>CANCELLED</code></td><td>después</td><td>hecho</td></tr>
+  </table>
+
+  <p>Esas mismas palabras, usadas en tus archivos, son cabeceras reales:</p>
+
+  <div class="org-example"><span class="hl">TODO</span> Preparar la charla
+<span class="hl">NEXT</span> Escribir el guion
+<span class="hl">WAITING</span> Respuesta de la editorial
+<span class="hl">DONE</span> Elegir la fecha
+<span class="hl">CANCELLED</span> Alquilar la sala</div>
+
+  <div class="callout warn">
+    <span class="label">Compara: sin <code>|</code></span>
+    <p>Con <code>"TODO NEXT DONE"</code> (sin barra), org considera hecho <strong>solo el último</strong>, <code>DONE</code>; <code>TODO</code> y <code>NEXT</code> siguen pendientes. La barra existe para que tú decidas la frontera en lugar de que la fije el orden.</p>
+  </div>
+
+  <p>org usa esa división para saber qué cuenta como pendiente: qué sale en la lista de TODOs, cómo se rellenan los contadores (<code>[2/5]</code>) y qué proyectos están encallados. Y cambiar de estado es una tecla:</p>
+
+  <table>
+    <tr><th>Atajo</th><th>Acción</th></tr>
+    <tr><td><kbd>S-Right</kbd> / <kbd>S-Left</kbd></td><td>Sobre la cabecera: <strong>cicla</strong> al estado siguiente / anterior.</td></tr>
+    <tr><td><kbd>Space O S</kbd></td><td><strong>Elegir un estado</strong> de una lista (<code>todo_select</code>). Para saltar a uno concreto.</td></tr>
+    <tr><td><kbd>C-c C-t</kbd></td><td>Equivalente Emacs de <kbd>Space O S</kbd>.</td></tr>
+  </table>
+
+  <div class="callout">
+    <span class="label">Registro (logging)</span>
+    <p>Puedes pedir que ciertos cambios de estado dejen rastro. Con <code>!</code> se registra una <strong>marca de tiempo</strong>; con <code>@</code> se pide además una <strong>nota</strong>. Ejemplo: <code>"TODO(t) NEXT(n) | DONE(d!)"</code> hace que al marcar <code>DONE</code> se añada un <code>CLOSED:</code>. El parámetro <code>log_done</code> controla lo mismo globalmente (por defecto <code>false</code>).</p>
+  </div>
+
+  <h2><span class="num">02</span>Fechas: SCHEDULED, DEADLINE y timestamps</h2>
+
+  <p>Una tarea sin fecha solo vive en una lista. Con fechas entra en la agenda. Hay tres marcas de tiempo que conviene no confundir:</p>
+
+  <table>
+    <tr><th>Tipo</th><th>Significa</th><th>Atajo</th></tr>
+    <tr><td><code>SCHEDULED:</code></td><td>Cuándo <strong>planeas trabajarla</strong>.</td><td><kbd>Space O s</kbd></td></tr>
+    <tr><td><code>DEADLINE:</code></td><td>Cuándo <strong>vence</strong> (avisa días antes).</td><td><kbd>Space O d</kbd></td></tr>
+    <tr><td>timestamp activo <code>&lt;…&gt;</code></td><td>Una fecha/evento "vivo" (aparece en agenda).</td><td><kbd>Space O i .</kbd></td></tr>
+    <tr><td>timestamp inactivo <code>[…]</code></td><td>Una fecha como dato, no como plan.</td><td><kbd>Space O i !</kbd></td></tr>
+  </table>
+
+  <div class="org-example"><span class="hl">TODO</span> Revisar el borrador del informe
+   <span class="hl">SCHEDULED:</span> &lt;2026-10-12 Mon&gt;
+   <span class="hl">DEADLINE:</span>  &lt;2026-10-16 Fri&gt;</div>
+
+  <p>La agenda avisa de un <code>DEADLINE</code> desde <strong>14 días</strong> antes (<code>deadline_warning_days</code>). Un <code>SCHEDULED</code> con un retraso <code>-2d</code> ("empieza 2 días antes") también se entiende.</p>
+
+  <div class="callout warn">
+    <span class="label">Ajustar fechas</span>
+    <p>Con el cursor sobre la fecha: <kbd>S-Right</kbd>/<kbd>S-Left</kbd> la mueven <strong>un día</strong>; <kbd>S-Up</kbd>/<kbd>S-Down</kbd>, un minuto (en horas). También existe <kbd>Space O i .</kbd> para un timestamp suelto. En la agenda verás las mismas teclas.</p>
+  </div>
+
+  <h2><span class="num">03</span>La agenda: todo lo que tiene fecha, junto</h2>
+
+  <p><kbd>Space O a</kbd> abre el <strong>menú de vistas</strong>. Cada tecla es un filtro distinto:</p>
+
+  <table>
+    <tr><th>Tecla</th><th>Vista</th></tr>
+    <tr><td><kbd>a</kbd></td><td>Agenda de la semana (o del día).</td></tr>
+    <tr><td><kbd>t</kbd></td><td>Lista de <strong>todas</strong> las tareas TODO, sin fechas.</td></tr>
+    <tr><td><kbd>n</kbd></td><td>Agenda <strong>y</strong> todos los TODOs: la vista de trabajo.</td></tr>
+    <tr><td><kbd>m</kbd> / <kbd>M</kbd></td><td>Coincidencia de tags / propiedades (solo TODOs con <kbd>M</kbd>).</td></tr>
+    <tr><td><kbd>s</kbd> / <kbd>S</kbd></td><td>Búsqueda de texto (solo TODOs con <kbd>S</kbd>).</td></tr>
+    <tr><td><kbd>#</kbd></td><td>Proyectos encallados (sin siguiente acción).</td></tr>
+    <tr><td><kbd>?</kbd></td><td>Entradas <code>:FLAGGED:</code> de MobileOrg.</td></tr>
+  </table>
+
+  <p>Dentro de una vista, es un buffer normal: te mueves con <kbd>j</kbd>/<kbd>k</kbd> y editas sin abrir nada.</p>
+
+  <table>
+    <tr><th>Tecla</th><th>Acción</th></tr>
+    <tr><td><kbd>t</kbd></td><td>Cambiar el <strong>estado</strong> TODO de la línea.</td></tr>
+    <tr><td><kbd>s</kbd> / <kbd>d</kbd></td><td>Poner <code>SCHEDULED</code> / <code>DEADLINE</code>.</td></tr>
+    <tr><td><kbd>S-Left</kbd> / <kbd>S-Right</kbd></td><td>Mover la fecha un día.</td></tr>
+    <tr><td><kbd>f</kbd> / <kbd>b</kbd></td><td>Ir más adelante / más atrás en el tiempo.</td></tr>
+    <tr><td><kbd>.</kbd></td><td>Volver a <strong>hoy</strong>.</td></tr>
+    <tr><td><kbd>v w</kbd> / <kbd>v d</kbd></td><td>Ver semana / día.</td></tr>
+    <tr><td><kbd>R</kbd></td><td><strong>Refile</strong> la entrada a su destino.</td></tr>
+    <tr><td><kbd>q</kbd></td><td>Cerrar la vista.</td></tr>
+    <tr><td><kbd>g?</kbd></td><td>Ver todas las teclas de la vista.</td></tr>
+  </table>
+
+  <div class="callout">
+    <span class="label">Sin salir del editor</span>
+    <p>También hay comandos: <code>:Org agenda week</code>, <code>:Org agenda day</code>, <code>:Org todo_list</code>, <code>:Org search palabra</code>. Útiles si vienes de Emacs o quieres una vista desde un script.</p>
+  </div>
+
+  <h2><span class="num">04</span>Refile: cerrar el bucle</h2>
+
+  <p>Capturaste al inbox una idea que era una tarea. Ahora hay que llevarla a su sitio. Eso es <strong>refile</strong>:</p>
+
+  <table>
+    <tr><th>Atajo</th><th>Acción</th></tr>
+    <tr><td><kbd>Space O r</kbd></td><td><strong>Mueve</strong> el subtree actual bajo una cabecera destino.</td></tr>
+    <tr><td><kbd>Space O R</kbd></td><td>Igual, pero <strong>copiando</strong> (deja el original).</td></tr>
+    <tr><td><kbd>R</kbd> (en agenda)</td><td>Refile la tarea que tengas bajo el cursor.</td></tr>
+  </table>
+
+  <p>El destino se elige con autocompletado por la ruta de cabeceras. Por defecto org.nvim ofrece las cabeceras del <strong>buffer actual</strong> (como Emacs). Para poder refilear de <code>refile.org</code> a <strong>cualquier</strong> archivo de tu <code>~/org</code>, se le dice hasta qué nivel mirar:</p>
+
+  <div class="code-block">  refile = {
+    max_level = 3,            -- cabeceras de tus archivos de agenda hasta nivel 3
+    include_current_file = true,
+  },</div>
+
+  <div class="callout">
+    <span class="label">El bucle completo</span>
+    <p><strong>Capturar</strong> al inbox (<kbd>Space O c</kbd>) → <strong>procesar</strong>: si es acción, marcarla <code>TODO</code> y poner fecha (<kbd>Space O s</kbd>) → <strong>refile</strong> a su proyecto (<kbd>Space O r</kbd>) → <strong>trabajar</strong> desde la agenda (<kbd>Space O a</kbd> <kbd>n</kbd>).</p>
+  </div>
+
+  <h2><span class="num">05</span>Tu configuración (recomendada)</h2>
+
+  <p>Todo funciona sin tocar nada. Para sacarle partido, añade a <code>org.lua</code> una versión más rica de las palabras clave, registro al cerrar y el refile de arriba:</p>
+
+  <div class="code-block">  todo_keywords = { "TODO(t) NEXT(n) WAITING(w@) | DONE(d!) CANCELLED(c@)" },
+  log_done = "time",
+  refile = {
+    max_level = 3,
+    include_current_file = true,
+  },</div>
+
+  <p>Con esto: <kbd>Space O S</kbd> ofrece <em>TODO / NEXT / WAITING / DONE / CANCELLED</em> con tecla rápida; marcar <code>DONE</code> deja un <code>CLOSED:</code>; y refile ya cruza archivos. Si prefieres empezar simple, deja los keywords por defecto y aplica solo el <code>refile</code>.</p>
+
+  <h2><span class="num">06</span>Compruébalo (recuperación)</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué convierte una nota en tarea?</div>
+    <button class="opt" data-correct="false">Un enlace hacia ella</button>
+    <button class="opt" data-correct="false">Guardarla en el inbox</button>
+    <button class="opt" data-correct="false">Darle una fecha límite</button>
+    <button class="opt" data-correct="true">Ponerle una palabra clave</button>
+    <div class="explain">El estado (<code>TODO</code>…) es lo que la marca como tarea; la fecha solo la sitúa en el tiempo.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué añade <code>DEADLINE</code> frente a <code>SCHEDULED</code>?</div>
+    <button class="opt" data-correct="false">El día en que la piensas</button>
+    <button class="opt" data-correct="true">El día en que vence</button>
+    <button class="opt" data-correct="false">El proyecto al que pertenece</button>
+    <button class="opt" data-correct="false">La prioridad de la tarea</button>
+    <div class="explain"><code>SCHEDULED</code> = cuándo trabajar; <code>DEADLINE</code> = cuándo vence, con aviso previo.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué separa los estados activos de los hechos?</div>
+    <button class="opt" data-correct="false">El primer estado listado</button>
+    <button class="opt" data-correct="false">La tecla de registro</button>
+    <button class="opt" data-correct="true">La barra vertical <code>|</code></button>
+    <button class="opt" data-correct="false">La fecha de creación</button>
+    <div class="explain">En <code>"TODO NEXT | DONE"</code>, lo que va antes de <code>|</code> son estados activos y lo que va detrás son estados hechos.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Para qué sirve refile?</div>
+    <button class="opt" data-correct="false">Para crear un nodo nuevo</button>
+    <button class="opt" data-correct="false">Para fechar una tarea</button>
+    <button class="opt" data-correct="true">Para mover la nota a su sitio</button>
+    <button class="opt" data-correct="false">Para buscar entre notas</button>
+    <div class="explain">Refile mueve el subtree del inbox a la cabecera destino, cerrando el bucle captura → procesado.</div>
+  </div>
+
+  <h2><span class="num">07</span>Práctica</h2>
+  <ul class="checklist" data-persist="lesson-06">
+    <li>En una cabecera, cicla el estado con <kbd>S-Right</kbd> y vuelve con <kbd>S-Left</kbd>.</li>
+    <li>Crea una tarea <code>TODO</code> real y ponle <kbd>Space O s</kbd> (SCHEDULED) para mañana.</li>
+    <li>Ponle también un <kbd>Space O d</kbd> (DEADLINE) con una semana de margen.</li>
+    <li>Abre <kbd>Space O a</kbd> <kbd>n</kbd> y localiza tu tarea en la vista.</li>
+    <li>Desde la agenda, cambia su estado con <kbd>t</kbd> y muévela un día con <kbd>S-Right</kbd>.</li>
+    <li>Captura una acción al inbox y procésala con <kbd>Space O r</kbd> a su proyecto.</li>
+    <li>Añade a <code>org.lua</code> el bloque recomendado y reinicia Neovim.</li>
+    <li>Cierra una tarea con <code>DONE</code> y comprueba que aparece <code>CLOSED:</code>.</li>
+  </ul>
+
+  <div class="primary">
+    <span class="label">Fuentes primarias</span>
+    <p class="title">1. <a href="https://org-nvim.com/manual/org-todo.html">org.nvim · Manual de TODO</a> — keywords, secuencias y registro.</p>
+    <p>2. <a href="https://org-nvim.com/manual/org-dates.html">org.nvim · Manual de fechas</a> — SCHEDULED, DEADLINE, timestamps y repetidores.</p>
+    <p>3. <a href="https://org-nvim.com/manual/org-agenda.html">org.nvim · Manual de la agenda</a> — vistas, teclas y comandos.</p>
+    <p>4. <a href="https://org-nvim.com/manual/org-refile.html">org.nvim · Manual de refile</a> — destinos y configuración.</p>
+  </div>
+
+  <div class="ask">
+    <p><strong>¿Te atascas o algo no cuadra?</strong> Pregúntame. Si quieres, aplico a tu <code>org.lua</code> el bloque de keywords/refile, o te monto una <strong>vista de agenda propia</strong> (con tus tags) bajo una tecla del menú.</p>
+  </div>
+
+  <p class="ref-link"><a href="../reference/agenda-y-tareas.html">↗ Referencia: agenda y tareas</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="0005-captura-de-nodos.html">← 05 · Captura de nodos</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">07 · próximamente</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

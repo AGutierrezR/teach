@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · Plantillas de captura — Second Brain</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Lección 04 · Herramientas</div>
+  <h1>Plantillas de captura</h1>
+  <p class="subtitle">Hoy <kbd>Space O c</kbd> siempre te crea un <code>TODO</code>. Vas a darle un menú: una plantilla para notas, otra para tareas, otra para referencias — y todas caen en tu inbox canónico.</p>
+
+  <h2><span class="num">00</span>Antes de empezar: recuerda</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué convierte una lista en un mapa?</div>
+    <button class="opt" data-correct="false">Las carpetas</button>
+    <button class="opt" data-correct="false">Los títulos</button>
+    <button class="opt" data-correct="false">Los archivos</button>
+    <button class="opt" data-correct="true">Los comentarios</button>
+    <div class="explain">Un MOC es un mapa porque comentas <em>por qué</em> las notas van juntas, no solo porque las enlazas.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué se decide al capturar?</div>
+    <button class="opt" data-correct="false">Dónde va la nota</button>
+    <button class="opt" data-correct="true">Nada, solo se guarda</button>
+    <button class="opt" data-correct="false">Qué etiqueta lleva</button>
+    <button class="opt" data-correct="false">Cuál es su título</button>
+    <div class="explain">La captura es rápida y sin decisiones; clasificar es cosa del procesado.</div>
+  </div>
+
+  <h2><span class="num">01</span>Por qué tu captura solo hace tareas</h2>
+
+  <p>En org.nvim, si no defines plantillas, se usa una por defecto: un <code>TODO</code> bajo la cabecera <em>Tasks</em> de tu <code>default_notes_file</code> (<code>refile.org</code>). Por eso cualquier cosa que capturas nace como tarea, quieras o no.</p>
+
+  <p>Una <strong>plantilla de captura</strong> es un formulario reutilizable que decide tres cosas: qué <strong>esqueleto</strong> de texto se inserta, a qué <strong>destino</strong> va, y con qué <strong>descripción</strong> aparece en el menú. Con varias plantillas, <kbd>Space O c</kbd> abre un menú en vez de asumir "tarea".</p>
+
+  <h2><span class="num">02</span>Anatomía de una plantilla</h2>
+
+  <table>
+    <tr><th>Campo</th><th>Qué es</th></tr>
+    <tr><td><code>description</code></td><td>La etiqueta que verás en el menú de <kbd>Space O c</kbd>.</td></tr>
+    <tr><td><code>template</code></td><td>El esqueleto de texto. Un <code>*</code> inicial lo hace un entry.</td></tr>
+    <tr><td><code>target</code></td><td>Archivo destino. <code>""</code> = tu <code>default_notes_file</code>.</td></tr>
+    <tr><td><code>headline</code></td><td>Cuélgalo bajo esa cabecera; se crea si no existe.</td></tr>
+    <tr><td><code>olp</code></td><td>Ruta de cabeceras (deben existir) en vez de <code>headline</code>.</td></tr>
+    <tr><td><code>datetree</code></td><td>Cuélgalo bajo un árbol de fechas (útil para dailies).</td></tr>
+  </table>
+
+  <p>Y estos son los <strong>escapes</strong> que más vas a usar dentro del <code>template</code>:</p>
+
+  <table>
+    <tr><th>Escape</th><th>Inserta</th></tr>
+    <tr><td><code>%?</code></td><td>Dónde queda el cursor al abrir.</td></tr>
+    <tr><td><code>%u</code> / <code>%U</code></td><td>Fecha inactiva / fecha y hora.</td></tr>
+    <tr><td><code>%t</code> / <code>%T</code></td><td>Fecha activa / fecha y hora.</td></tr>
+    <tr><td><code>%a</code></td><td>Enlace al sitio desde donde capturaste.</td></tr>
+    <tr><td><code>%^{Texto}</code></td><td>Pregunta ese texto al vuelo.</td></tr>
+    <tr><td><code>%^{PROP}p</code></td><td>Pregunta el valor y lo guarda como propiedad.</td></tr>
+  </table>
+
+  <h2><span class="num">03</span>Tu configuración: tres plantillas</h2>
+
+  <p>Decisión (de la lección 02): tu <strong>inbox canónico es <code>refile.org</code></strong>. Las notas y referencias van bajo una cabecera <code>Inbox</code>; las tareas bajo <code>Tasks</code>. Añade este bloque dentro de <code>opts</code>, al mismo nivel que <code>extensions</code>:</p>
+
+  <div class="code-block">      capture = {
+        templates = {
+          n = {
+            description = "Nota (a procesar)",
+            template = "* %?\n  %u\n  %a",
+            target = "~/org/refile.org",
+            headline = "Inbox",
+          },
+          t = {
+            description = "Tarea",
+            template = "* TODO %?\n  %u\n  %a",
+            target = "~/org/refile.org",
+            headline = "Tasks",
+          },
+          r = {
+            description = "Referencia",
+            template = "* %^{Título}\n  %u\n  %a\n  %^{URL}",
+            target = "~/org/refile.org",
+            headline = "Inbox",
+          },
+        },
+      },</div>
+
+  <div class="callout">
+    <span class="label">Cómo leer esto</span>
+    <p>La clave (<code>n</code>, <code>t</code>, <code>r</code>) es lo que pulsas para elegir la plantilla. <code>%?</code> deja el cursor listo para escribir. <code>%u</code> pone la fecha de captura. <code>%a</code> guarda el enlace a donde estabas. En la de referencia, <code>%^{Título}</code> y <code>%^{URL}</code> te preguntan esos dos datos.</p>
+  </div>
+
+  <p>Un detalle de la plantilla de tarea: ese <code>TODO</code> es una <strong>palabra clave</strong> (keyword) de org. No es texto decorativo: marca la cabecera con un <em>estado</em> (<code>TODO</code>, <code>DONE</code>…) y es lo que convierte una línea en una tarea de verdad. Aquí basta con reconocerlo; lo usaremos a fondo en la lección 06.</p>
+
+  <div class="callout warn">
+    <span class="label">Un límite honesto</span>
+    <p>La plantilla de referencia solo <em>escribe</em> la URL en la nota; no la convierte en <code>ROAM_REFS</code> ni crea un nodo. Eso es la captura de roam (vía <code>roam_capture</code>), que es tema de una lección futura. Aquí basta con no perder la fuente.</p>
+  </div>
+
+  <h2><span class="num">04</span>Aplícalo</h2>
+  <ol class="steps">
+    <li>Abre tu config: <code>~/.config/nvim/lua/plugins/org.lua</code>.</li>
+    <li>Pega el bloque <code>capture = { … }</code> dentro de <code>opts</code>, hermano de <code>extensions</code>.</li>
+    <li>Guarda (<kbd>:w</kbd>) y <strong>reinicia Neovim</strong> (los <code>opts</code> no se recargan en caliente).</li>
+    <li>Pulsa <kbd>Space O c</kbd>: ahora aparece un menú con <em>Nota</em>, <em>Tarea</em> y <em>Referencia</em>.</li>
+    <li>Prueba la de Nota: escribe algo, finaliza con <kbd>C-c C-c</kbd> y comprueba que aparece bajo <code>* Inbox</code> en <code>refile.org</code>.</li>
+  </ol>
+
+  <h2><span class="num">05</span>Compruébalo (recuperación)</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué es una plantilla de captura?</div>
+    <button class="opt" data-correct="false">Un nodo ya procesado</button>
+    <button class="opt" data-correct="false">Una entrada de agenda</button>
+    <button class="opt" data-correct="true">Un formulario con destino</button>
+    <button class="opt" data-correct="false">Un archivo de enlaces</button>
+    <div class="explain">Esqueleto + destino + etiqueta: lo que convierte la captura en algo repetible.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué hace <code>%?</code> en la plantilla?</div>
+    <button class="opt" data-correct="false">Inserta la fecha de hoy</button>
+    <button class="opt" data-correct="true">Marca dónde va el cursor</button>
+    <button class="opt" data-correct="false">Pega el enlace de origen</button>
+    <button class="opt" data-correct="false">Pide un dato al usuario</button>
+    <div class="explain"><code>%?</code> es la posición del cursor; para preguntar un dato se usa <code>%^{…}</code>.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿En qué se convierte el destino?</div>
+    <button class="opt" data-correct="true">Dónde se guarda la nota</button>
+    <button class="opt" data-correct="false">Cómo se llama el nodo</button>
+    <button class="opt" data-correct="false">Cuándo se creó el nodo</button>
+    <button class="opt" data-correct="false">Quién enlaza a la nota</button>
+    <div class="explain">El <code>target</code> (y su <code>headline</code>) deciden el archivo y la cabecera donde aterriza.</div>
+  </div>
+
+  <h2><span class="num">06</span>Práctica</h2>
+  <ul class="checklist" data-persist="lesson-04">
+    <li>Añade el bloque <code>capture</code> con las tres plantillas a <code>org.lua</code>.</li>
+    <li>Reinicia Neovim y confirma que <kbd>Space O c</kbd> muestra el menú.</li>
+    <li>Captura una <strong>Nota</strong> real y verifica que cae bajo <code>* Inbox</code>.</li>
+    <li>Captura una <strong>Tarea</strong> y verifica que cae bajo <code>* Tasks</code>.</li>
+    <li>Captura una <strong>Referencia</strong> y responde a los prompts de Título y URL.</li>
+    <li>Abre <code>refile.org</code> y comprueba que las tres se ven bien formadas.</li>
+  </ul>
+
+  <div class="primary">
+    <span class="label">Fuentes primarias</span>
+    <p class="title">1. <a href="https://org-nvim.com/manual/org-capture.html">org.nvim · Manual de Capture</a></p>
+    <p>La lista completa de campos, escapes y tipos de plantilla. <br>
+    2. <a href="https://org-nvim.com/examples/11-capture.html">org.nvim · Ejemplo 11: file a note from anywhere</a> — ejemplos ejecutables.</p>
+  </div>
+
+  <div class="ask">
+    <p><strong>¿Te atascas o algo no cuadra?</strong> Pregúntame. Si quieres, aplico yo el bloque a tu <code>org.lua</code>, o te diseño una cuarta plantilla (p. ej. una tarea con <code>SCHEDULED</code> de hoy) y de paso la probamos.</p>
+  </div>
+
+  <p class="ref-link"><a href="../reference/plantillas-captura.html">↗ Referencia: plantillas y escapes de captura</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="0003-maps-of-content.html">← 03 · Maps of Content</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <a class="nav-next" href="0005-captura-de-nodos.html">05 · Captura de nodos →</a>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

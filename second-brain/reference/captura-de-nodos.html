@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencia · Captura de nodos</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Referencia rápida · imprimible</div>
+  <h1>Captura de nodos (roam)</h1>
+  <p class="subtitle">Plantillas de la extensión roam: crean nodos, no texto. Comando: <kbd>Space O m c</kbd> (<code>roam_capture</code>). Directorio de nodos: <code>~/org/roam</code>.</p>
+
+  <h2>Estructura en <code>opts.extensions</code></h2>
+  <div class="code-block">roam = {
+  directory = "~/org/roam",
+  capture_templates = {
+    KEY = {
+      description = "…",                         -- etiqueta del menú
+      template    = "%?\n",                      -- cuerpo del nodo
+      target      = "%<%Y%m%d%H%M%S>-${slug}.org", -- nombre de archivo
+      head        = "#+title: ${title}\n",       -- cabecera del nodo nuevo
+    },
+  },
+},</div>
+
+  <h2>Campos</h2>
+  <table>
+    <tr><th>Campo</th><th>Qué hace</th></tr>
+    <tr><td><code>description</code></td><td>Etiqueta en el menú.</td></tr>
+    <tr><td><code>template</code></td><td>Cuerpo del nodo. <code>%?</code> = cursor.</td></tr>
+    <tr><td><code>head</code></td><td>Texto escrito en el archivo nuevo (típ. <code>#+title:</code>).</td></tr>
+    <tr><td><code>target</code></td><td>Dónde va: archivo nuevo o una forma (tabla abajo).</td></tr>
+    <tr><td><code>type</code></td><td>Como org-capture: <code>plain</code> (def.), <code>entry</code>…</td></tr>
+    <tr><td><code>properties</code></td><td>Propiedades del nodo/entry.</td></tr>
+    <tr><td><code>unnarrowed</code></td><td>Editar el texto ya en el archivo destino.</td></tr>
+  </table>
+
+  <h2>Escapes del nodo (<code>${…}</code>)</h2>
+  <table>
+    <tr><th>Escape</th><th>Inserta</th></tr>
+    <tr><td><code>${title}</code></td><td>El título del nodo.</td></tr>
+    <tr><td><code>${slug}</code></td><td>Título en minúsculas, <code>_</code> por lo no alfanumérico.</td></tr>
+    <tr><td><code>${id}</code></td><td>El UUID del nodo.</td></tr>
+    <tr><td><code>${file}</code></td><td>La ruta del nodo.</td></tr>
+    <tr><td><code>${clave}</code></td><td>Cualquier otra: se pregunta una vez.</td></tr>
+    <tr><td><code>${clave=def}</code></td><td>Se pregunta, con ese valor por defecto.</td></tr>
+  </table>
+  <p>Los escapes <code>%…</code> de org-capture (<code>%?</code>, <code>%u</code>, <code>%a</code>, <code>%^{…}</code>) también funcionan aquí.</p>
+
+  <h2>Formas de <code>target</code></h2>
+  <table>
+    <tr><th>Forma</th><th>Resultado</th></tr>
+    <tr><td><code>"…-${slug}.org"</code></td><td>Nodo nuevo (archivo propio).</td></tr>
+    <tr><td><code>{ "file", path }</code></td><td>Bajo el archivo <code>path</code>.</td></tr>
+    <tr><td><code>{ "file+head", path, head }</code></td><td>Archivo nuevo con cabecera <code>head</code>.</td></tr>
+    <tr><td><code>{ "file+olp", path, { "A","B" } }</code></td><td>Bajo cabeceras que ya existen.</td></tr>
+    <tr><td><code>{ "file+head+olp", … }</code></td><td>Cabecera + ruta de outline.</td></tr>
+    <tr><td><code>{ "file+datetree", path, tree }</code></td><td>Árbol de fechas (<code>day</code>/<code>week</code>/<code>month</code>).</td></tr>
+    <tr><td><code>{ "node", "Título" }</code></td><td>Capturar dentro de un nodo existente.</td></tr>
+  </table>
+
+  <h2>Plantilla por defecto de roam</h2>
+  <div class="code-block">d = {
+  description = "default",
+  type = "plain",
+  template = "%?",
+  target = "%<%Y%m%d%H%M%S>-${slug}.org",
+  head = "#+title: ${title}\n",
+  unnarrowed = true,
+},</div>
+
+  <h2>La plantilla “default” de fábrica</h2>
+  <p>La extensión roam trae siempre una plantilla <code>d</code> (descripción <em>“default”</em>). org.nvim <strong>fusiona diccionarios en profundidad</strong>, así que tus plantillas se <em>añaden</em> a esta, no la reemplazan:</p>
+  <div class="code-block">d = {
+  description = "default",
+  type = "plain",
+  template = "%?",
+  target = "%<%Y%m%d%H%M%S>-${slug}.org",
+  head = "#+title: ${title}\n",
+  unnarrowed = true,
+}</div>
+  <p>No se puede borrar desde la config; solo <strong>redefinir</strong> usando la misma clave <code>d</code>. (Las dailies tienen su propia <code>d</code>: <code>entry</code>, <code>* %?</code>, <code>%&lt;%Y-%m-%d&gt;.org</code>.)</p>
+
+  <h2>Tu configuración (idea + MOC + literatura)</h2>
+  <div class="code-block">roam = {
+  directory = "~/org/roam",
+  capture_templates = {
+    i = {
+      description = "Idea (nodo)",
+      template = "%?\n",
+      target = "%<%Y%m%d%H%M%S>-${slug}.org",
+      head = "#+title: ${title}\n",
+    },
+    m = {
+      description = "MOC (nodo)",
+      template = "Mi mapa de ${title}. Empezar aquí.\n%?\n* \n* \n",
+      target = "%<%Y%m%d%H%M%S>-moc-${slug}.org",
+      head = "#+title: MOC ${title}\n#+filetags: moc\n",
+    },
+    l = {
+      description = "Literatura (nodo)",
+      template = "%?\n  %a",
+      target = "%<%Y%m%d%H%M%S>-${slug}.org",
+      head = "#+title: ${title}\n#+filetags: literature\n",
+    },
+  },
+},</div>
+
+  <div class="callout">
+    <span class="label">MOC en un paso</span>
+    <p>La plantilla <code>m</code> crea el nodo ya titulado <code>MOC …</code>, con <code>#+filetags: moc</code> y el esqueleto de intro + grupos. Cumple la regla de la lección 03: título, tag e intro listos para enlazar.</p>
+  </div>
+
+  <div class="callout">
+    <span class="label">Efímera o nodo</span>
+    <p><strong>Ya es permanente</strong> (idea, fuente) → <kbd>Space O m c</kbd> (nodo). <strong>Aún no lo sé / del día</strong> → <kbd>Space O c</kbd> (efímera al inbox). Relacionado: <kbd>Space O m f</kbd> crea un nodo y lo visita.</p>
+  </div>
+
+  <div class="callout warn">
+    <span class="label">Aparte: captura de fuentes web</span>
+    <p><code>capture_ref_templates</code> alimenta el protocolo <code>roam-ref</code>: capturas una web y el nodo nace con <code>ROAM_REFS: URL</code>. Requiere configurar el protocolo en el navegador; se verá más adelante.</p>
+  </div>
+
+  <p class="ref-link"><a href="https://org-nvim.com/manual/org-extensions-roam.html">↗ Fuente: org.nvim · Manual de org-roam</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="../lessons/0005-captura-de-nodos.html">← Lección 05</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">Referencia</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

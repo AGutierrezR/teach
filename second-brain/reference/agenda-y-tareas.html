@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencia · Agenda y tareas</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Referencia rápida · imprimible</div>
+  <h1>Agenda y tareas</h1>
+  <p class="subtitle">Estados TODO, fechas (SCHEDULED / DEADLINE), vistas de agenda y refile. Prefijo: <kbd>&lt;leader&gt;O</kbd> (leader = <kbd>Space</kbd>).</p>
+
+  <h2>Palabras clave (estados)</h2>
+  <div class="code-block">todo_keywords = { "TODO(t) NEXT(n) WAITING(w@) | DONE(d!) CANCELLED(c@)" }
+-- (k) tecla rápida · ! registra fecha · @ pide nota · | separa activos de hechos</div>
+  <table>
+    <tr><th>Atajo</th><th>Acción</th></tr>
+    <tr><td><kbd>S-Right</kbd> / <kbd>S-Left</kbd></td><td>Ciclar al estado siguiente / anterior en la cabecera.</td></tr>
+    <tr><td><kbd>Space O S</kbd></td><td>Elegir un estado de una lista (<code>todo_select</code>).</td></tr>
+    <tr><td><kbd>C-c C-t</kbd></td><td>Equivalente Emacs de <kbd>Space O S</kbd>.</td></tr>
+  </table>
+
+  <h2>Fechas</h2>
+  <table>
+    <tr><th>Atajo</th><th>Acción</th></tr>
+    <tr><td><kbd>Space O s</kbd></td><td><code>SCHEDULED:</code> — cuándo planeas trabajarla.</td></tr>
+    <tr><td><kbd>Space O d</kbd></td><td><code>DEADLINE:</code> — cuándo vence (aviso 14 días antes).</td></tr>
+    <tr><td><kbd>Space O i .</kbd></td><td>Timestamp activo <code>&lt;…&gt;</code>.</td></tr>
+    <tr><td><kbd>Space O i !</kbd></td><td>Timestamp inactivo <code>[…]</code>.</td></tr>
+    <tr><td><kbd>S-Left</kbd> / <kbd>S-Right</kbd></td><td>Mover la fecha un día (sobre el timestamp).</td></tr>
+    <tr><td><kbd>S-Up</kbd> / <kbd>S-Down</kbd></td><td>Mover un minuto (timestamps con hora).</td></tr>
+  </table>
+  <p>Repetidores: <code>+1w</code> (fijo), <code>++1w</code> (desde hoy), <code>.+1d</code> (desde la última hecha). Retraso de un <code>SCHEDULED</code>: <code>-2d</code>. Aviso de <code>DEADLINE</code>: <code>deadline_warning_days</code> (14).</p>
+
+  <h2>Registro (logging)</h2>
+  <table>
+    <tr><th>Opción</th><th>Qué hace</th></tr>
+    <tr><td><code>log_done = "time"</code></td><td>Añade <code>CLOSED:</code> al marcar DONE.</td></tr>
+    <tr><td><code>log_repeat = "time"</code></td><td>Registro al completar una tarea repetida (por defecto).</td></tr>
+    <tr><td><code>log_reschedule</code> / <code>log_redeadline</code></td><td>Registrar cambios de SCHEDULED / DEADLINE.</td></tr>
+  </table>
+
+  <h2>Menú de la agenda · <kbd>Space O a</kbd></h2>
+  <table>
+    <tr><th>Tecla</th><th>Vista</th></tr>
+    <tr><td><kbd>a</kbd></td><td>Agenda de la semana (o del día).</td></tr>
+    <tr><td><kbd>t</kbd></td><td>Lista de todos los TODO.</td></tr>
+    <tr><td><kbd>T</kbd></td><td>TODO de una palabra clave concreta.</td></tr>
+    <tr><td><kbd>m</kbd> / <kbd>M</kbd></td><td>Match de tags/propiedades (solo TODOs con <kbd>M</kbd>).</td></tr>
+    <tr><td><kbd>s</kbd> / <kbd>S</kbd></td><td>Búsqueda de texto (solo TODOs con <kbd>S</kbd>).</td></tr>
+    <tr><td><kbd>n</kbd></td><td>Agenda <strong>y</strong> todos los TODOs.</td></tr>
+    <tr><td><kbd>#</kbd></td><td>Proyectos encallados.</td></tr>
+    <tr><td><kbd>/</kbd></td><td>Multi-occur en los archivos de agenda.</td></tr>
+    <tr><td><kbd>e</kbd></td><td>Exportar las vistas.</td></tr>
+    <tr><td><kbd>?</kbd></td><td>Entradas <code>:FLAGGED:</code> (MobileOrg).</td></tr>
+    <tr><td><kbd>*</kbd></td><td>Vistas "sticky" (persistentes).</td></tr>
+  </table>
+
+  <h2>Dentro de una vista</h2>
+  <table>
+    <tr><th>Tecla</th><th>Acción</th></tr>
+    <tr><td><kbd>t</kbd></td><td>Cambiar el estado TODO.</td></tr>
+    <tr><td><kbd>s</kbd> / <kbd>d</kbd></td><td>Poner SCHEDULED / DEADLINE.</td></tr>
+    <tr><td><kbd>S-Left</kbd> / <kbd>S-Right</kbd></td><td>Mover la fecha un día.</td></tr>
+    <tr><td><kbd>&gt;</kbd></td><td>Cambiar la fecha por prompt.</td></tr>
+    <tr><td><kbd>f</kbd> / <kbd>b</kbd></td><td>Avanzar / retroceder en el tiempo.</td></tr>
+    <tr><td><kbd>.</kbd></td><td>Ir a hoy.</td></tr>
+    <tr><td><kbd>v w</kbd> / <kbd>v d</kbd></td><td>Vista de semana / día.</td></tr>
+    <tr><td><kbd>R</kbd></td><td>Refile de la entrada.</td></tr>
+    <tr><td><kbd>$</kbd></td><td>Archivar el subtree.</td></tr>
+    <tr><td><kbd>T</kbd></td><td>Mostrar las tags.</td></tr>
+    <tr><td><kbd>I</kbd> / <kbd>O</kbd></td><td>Clock in / clock out.</td></tr>
+    <tr><td><kbd>/</kbd></td><td>Filtrar la vista.</td></tr>
+    <tr><td><kbd>q</kbd> / <kbd>Q</kbd></td><td>Cerrar / cerrar y matar el buffer.</td></tr>
+    <tr><td><kbd>g?</kbd></td><td>Todas las teclas de la vista.</td></tr>
+  </table>
+
+  <h2>Refile</h2>
+  <table>
+    <tr><th>Atajo</th><th>Acción</th></tr>
+    <tr><td><kbd>Space O r</kbd></td><td>Mover el subtree a un destino.</td></tr>
+    <tr><td><kbd>Space O R</kbd></td><td>Copiar el subtree a un destino.</td></tr>
+    <tr><td><kbd>R</kbd> (agenda)</td><td>Refile la entrada bajo el cursor.</td></tr>
+  </table>
+  <div class="code-block">refile = {
+  max_level = 3,            -- cabeceras de los archivos de agenda hasta nivel 3
+  include_current_file = true,
+}</div>
+  <p>Sin esto, los destinos por defecto son las cabeceras del <strong>buffer actual</strong>. Con <code>max_level</code>, refile cruza todos tus archivos de agenda.</p>
+
+  <h2>Comandos <code>:Org</code></h2>
+  <table>
+    <tr><th>Comando</th><th>Acción</th></tr>
+    <tr><td><code>:Org agenda week</code> / <code>day</code> / <code>month</code></td><td>Abrir una vista por span.</td></tr>
+    <tr><td><code>:Org agenda n</code></td><td>Agenda + todos los TODOs.</td></tr>
+    <tr><td><code>:Org todo_list</code></td><td>Lista global de TODOs (opcional: un keyword).</td></tr>
+    <tr><td><code>:Org search &lt;texto&gt;</code></td><td>Búsqueda en los archivos de agenda.</td></tr>
+    <tr><td><code>:Org tags_search &lt;match&gt;</code></td><td>Match de tags / propiedades.</td></tr>
+  </table>
+
+  <h2>El bucle completo</h2>
+  <div class="org-example">Capturar   <span class="cm">→</span> <span class="hl">Space O c</span>      al inbox (rápido, sin decidir)
+Procesar   <span class="cm">→</span> <span class="hl">Space O S</span> + <span class="hl">Space O s</span>  estado + fecha
+Refile     <span class="cm">→</span> <span class="hl">Space O r</span>      a su proyecto
+Trabajar   <span class="cm">→</span> <span class="hl">Space O a n</span>    desde la agenda</div>
+
+  <div class="callout">
+    <span class="label">Regla de oro</span>
+    <p>¿Dudas de una tecla en la agenda? <kbd>g?</kbd>. ¿Dudas en un buffer org? <kbd>g?</kbd>. La lista se filtra con <kbd>/</kbd>.</p>
+  </div>
+
+  <p class="ref-link"><a href="https://org-nvim.com/manual/org-agenda.html">↗ Fuente: manual oficial de org.nvim</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="../lessons/0006-agenda-y-tareas.html">← Lección 06</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">Referencia</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>
