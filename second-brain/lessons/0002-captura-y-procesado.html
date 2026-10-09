@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · Captura y procesado — Second Brain</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Lección 02 · El bucle</div>
+  <h1>Captura y procesado</h1>
+  <p class="subtitle">Una idea sin procesar es ruido. Esta lección instala el bucle de dos fases que convierte lo que capturas en nodos que valen — y que hace que el sistema no se pudra.</p>
+
+  <h2><span class="num">00</span>Antes de empezar: recuerda</h2>
+  <p>Dos preguntas de la lección anterior, para fijarlas. No mires atrás.</p>
+
+  <div class="quiz">
+    <div class="q">¿Qué necesita un headline para ser un nodo?</div>
+    <button class="opt" data-correct="false">Un título muy claro</button>
+    <button class="opt" data-correct="true">Una propiedad con ID</button>
+    <button class="opt" data-correct="false">Un enlace hacia fuera</button>
+    <button class="opt" data-correct="false">Una etiqueta de archivo</button>
+    <div class="explain">La propiedad <code>:ID:</code>. El título es decorativo; el ID es la identidad.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿A qué apunta un enlace de org-roam?</div>
+    <button class="opt" data-correct="false">A la ruta completa</button>
+    <button class="opt" data-correct="false">A la línea exacta</button>
+    <button class="opt" data-correct="false">Al título que ves</button>
+    <button class="opt" data-correct="true">Al ID del nodo</button>
+    <div class="explain">A un <code>id:…</code>, no a una ruta. Por eso sobrevive a mover y renombrar el archivo.</div>
+  </div>
+
+  <h2><span class="num">01</span>Dos fases, no una</h2>
+
+  <p>El error clásico del principiante es intentar organizar <em>mientras</em> captura. Así se pierden ideas: cada nota te obliga a decidir "¿dónde va esto?" y acabas no capturando nada. Los dos métodos de referencia separan las fases:</p>
+
+  <table>
+    <tr><th>Método</th><th>Cómo lo parte</th></tr>
+    <tr><td>CODE — Tiago Forte</td><td><strong>C</strong>apture → <strong>O</strong>rganize → <strong>D</strong>istill → <strong>E</strong>xpress. Primero capturas, luego organizas.</td></tr>
+    <tr><td>Zettelkasten — org-roam</td><td><strong>Nota efímera</strong> (captura bruta) → <strong>nota permanente</strong> (procesada).</td></tr>
+  </table>
+
+  <p>Regla que separa las dos fases:</p>
+  <div class="callout">
+    <span class="label">Regla de las dos fases</span>
+    <p><strong>Capturar:</strong> rápido, sin decidir nada, a un único inbox. <strong>Procesar:</strong> despacio, con decisiones, en un momento aparte.</p>
+  </div>
+
+  <h2><span class="num">02</span>Fase 1 · Capturar (sin fricción)</h2>
+
+  <p>Capturar es tirar la idea al inbox desde donde estés, sin romper tu concentración. Tu setup tiene dos puertas de entrada:</p>
+
+  <table>
+    <tr><th>Atajo</th><th>Para qué</th></tr>
+    <tr><td><kbd>Space O c</kbd></td><td>Capturar una tarea o nota puntual. Va a tu inbox (<code>~/org/refile.org</code>, cabecera <em>Tasks</em>).</td></tr>
+    <tr><td><kbd>Space O m j</kbd></td><td>Capturar en la <strong>nota diaria</strong> de hoy. Ideal para pensamientos, observaciones, lo que va pasando en el día.</td></tr>
+  </table>
+
+  <p>El criterio para capturar es la <strong>resonancia</strong> (Forte): si algo te llama — te resulta útil, interesante o conecta con lo que estás pensando — lo capturas. No captures todo; captura lo que resuena.</p>
+
+  <div class="callout warn">
+    <span class="label">Tu inbox debe ser UNO solo</span>
+    <p>Ahora mismo tienes al menos tres sitios candidatos a inbox: la cabecera <em>Inbox</em> de <code>init.org</code>, el archivo <code>refile.org</code> y las notas diarias. Eso es una trampa: <strong>lo que se captura en tres sitios, no se procesa en ninguno</strong>. Elige uno como inbox canónico (recomiendo <code>refile.org</code>) y elimina o degrada los otros. Nada de "ya lo ordenaré luego" repartido.</p>
+  </div>
+
+  <h2><span class="num">03</span>Fase 2 · Procesar (con decisiones)</h2>
+
+  <p>Procesar es coger cada línea del inbox y darle un destino. Solo hay <strong>tres destinos</strong>, y decidir entre ellos es rápido:</p>
+
+  <table>
+    <tr><th>Si es…</th><th>Va a…</th><th>Cómo</th></tr>
+    <tr><td>Una <strong>acción</strong> ("llamar a X", "arreglar Y")</td><td>Tarea en la agenda</td><td><kbd>Space O r</kbd> (refile) + fecha con <kbd>Space O s</kbd></td></tr>
+    <tr><td>Sobre una <strong>fuente externa</strong> (libro, web, paper)</td><td>Nota de literatura</td><td><kbd>Space O m f</kbd> para crear el nodo; añade <code>ROAM_REFS</code> con su URL/cita</td></tr>
+    <tr><td>Una <strong>idea propia</strong></td><td>Nota permanente</td><td><kbd>Space O m f</kbd> crear nodo + <kbd>Space O m i</kbd> enlazarlo a ≥1 nodo existente</td></tr>
+  </table>
+
+  <p>Y una cuarta opción que da miedo pero es la más importante: <strong>si no encaja en ninguna, se borra</strong>. Sin culpa. Un inbox que solo crece no es un sistema, es un cementerio.</p>
+
+  <h3>El circuito completo, en un ejemplo</h3>
+  <p>Supón que capturaste esto al vuelo (<kbd>Space O c</kbd>):</p>
+  <div class="org-example">* TODO Las notas atómicas se enlazan mejor que las largas
+  [2026-10-09 Fri]</div>
+  <p>Al procesar: no es una acción (nadie debe "hacer" esto), es una idea. Así que:</p>
+  <ol class="steps">
+    <li><kbd>Space O m f</kbd> → escribe <code>Notas atómicas</code> → <kbd>Enter</kbd> → se crea el nodo. Escribe la idea con tus palabras y guarda (<kbd>:w</kbd>).</li>
+    <li>Vuelve al nodo donde lo vas a conectar y usa <kbd>Space O m i</kbd> para enlazar <code>Notas atómicas</code>. Ya tiene un backlink.</li>
+    <li>Borra la línea <code>TODO</code> original del inbox. Su contenido ya vive en el nodo.</li>
+  </ol>
+
+  <div class="callout">
+    <span class="label">La victoria de hoy</span>
+    <p>Has recorrido el bucle entero: una idea suelta del inbox se ha convertido en un <strong>nodo permanente con ID y un enlace</strong>. Eso es el corazón del sistema. Capturar ya sabías; <em>procesar</em> es lo que convierte un vertedero en un cerebro.</p>
+  </div>
+
+  <h2><span class="num">04</span>Compruébalo (recuperación)</h2>
+
+  <div class="quiz">
+    <div class="q">¿Cuál es la regla de la captura?</div>
+    <button class="opt" data-correct="false">Lento y muy ordenado</button>
+    <button class="opt" data-correct="false">Solo desde la agenda</button>
+    <button class="opt" data-correct="true">Rápido y sin decidir</button>
+    <button class="opt" data-correct="false">Solo si es tarea</button>
+    <div class="explain">La decisión ("¿dónde va?") pertenece a la fase de procesado, no a la de captura. Si decides al capturar, dejas de capturar.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Dónde debe acabar una idea?</div>
+    <button class="opt" data-correct="false">En una tarea suelta</button>
+    <button class="opt" data-correct="true">En un nodo enlazado</button>
+    <button class="opt" data-correct="false">En el archivo bruto</button>
+    <button class="opt" data-correct="false">En una nota diaria</button>
+    <div class="explain">Una idea propia se convierte en nodo permanente (con ID) y se enlaza a al menos otro nodo. La nota diaria y el bruto son solo el punto de partida.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Cuándo se procesa el inbox?</div>
+    <button class="opt" data-correct="false">Nunca, se deja así</button>
+    <button class="opt" data-correct="false">Cada vez al capturar</button>
+    <button class="opt" data-correct="false">Solo si molesta mucho</button>
+    <button class="opt" data-correct="true">En una rutina fija</button>
+    <div class="explain">El procesado necesita un momento dedicado y repetido (diario o semanal). Sin rutina, el inbox solo acumula.</div>
+  </div>
+
+  <h2><span class="num">05</span>Práctica</h2>
+  <p>Marca los pasos; se guarda en este navegador.</p>
+  <ul class="checklist" data-persist="lesson-02">
+    <li>Elige tu <strong>inbox canónico</strong> (recomendado: <code>refile.org</code>) y decide qué hacer con los otros dos destinos (la cabecera <em>Inbox</em> de <code>init.org</code> y las dailies).</li>
+    <li>Captura 3 cosas reales ahora con <kbd>Space O c</kbd> o <kbd>Space O m j</kbd>. No las ordenes: solo captúralas.</li>
+    <li>Cambia de contexto (cierra, bebe agua) y vuelve en frío a procesarlas.</li>
+    <li>Procesa cada línea con la tabla de 3 destinos. Al menos una debe terminar como <strong>nota permanente enlazada</strong>.</li>
+    <li>Borra las líneas que no encajen en ningún destino.</li>
+    <li>Repite el procesado mañana con lo que hayas capturado ese día.</li>
+  </ul>
+
+  <div class="primary">
+    <span class="label">Fuentes primarias</span>
+    <p class="title">1. <a href="https://www.orgroam.com/manual.html">org-roam · §3 “A Brief Introduction to the Zettelkasten Method”</a></p>
+    <p>Define nota efímera y permanente, que es exactamente la separación de esta lección. <br>
+    2. <a href="https://org-nvim.com/manual/org-capture.html">org.nvim · Manual de Capture</a> — cómo funcionan tus templates y los <code>%</code>-escapes. Es el prerrequisito de la próxima lección.</p>
+  </div>
+
+  <div class="ask">
+    <p><strong>¿Te atascas o quieres ajustar algo?</strong> Dime y lo resolvemos. Puedo, por ejemplo, diseñar contigo tus templates de captura (para que <kbd>Space O c</kbd> cree una nota en vez de una tarea), o revisar cómo tienes repartidos los inbocks. El flujo completo está resumido en la referencia.</p>
+  </div>
+
+  <p class="ref-link"><a href="../reference/bucle-captura-procesado.html">↗ Referencia: el bucle completo</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="0001-el-nodo-y-el-enlace.html">← 01 · El nodo y el enlace</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <a class="nav-next" href="0003-maps-of-content.html">03 · Maps of Content →</a>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

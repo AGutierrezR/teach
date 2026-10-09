@@ -16,3 +16,4 @@
 - Lecciones numeradas `0001-...`, un solo tema acotado cada una.
 - Cada lección enlaza a `../reference/*.html` y a la fuente primaria.
 - Quiz: opciones siempre con el mismo número de palabras/caracteres para no dar pistas.
+- **Quiz: la respuesta correcta NUNCA va siempre en la primera posición.** Regla dura: variar la posición manualmente al escribir, y además `widgets.js` mezcla las opciones en tiempo de carga (salvo `data-noshuffle`). Si escribes un quiz a mano, no pongas la correcta primero por defecto.

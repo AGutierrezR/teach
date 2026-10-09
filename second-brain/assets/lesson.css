@@ -278,8 +278,14 @@ kbd {
 .ask strong { color: #fff; }
 .ask a { color: #f3c9b0; border-bottom-color: transparent; }
 
+p.ref-link {
+  margin: 2.4rem 0 0;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+}
+
 footer.lesson-nav {
-  margin-top: 3rem;
+  margin-top: 0.8rem;
   padding-top: 1.2rem;
   border-top: 1px solid var(--rule);
   font-family: var(--sans);
@@ -287,9 +293,15 @@ footer.lesson-nav {
   color: var(--ink-soft);
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   gap: 1rem;
   flex-wrap: wrap;
 }
+footer.lesson-nav .nav-prev { flex: 1 1 0; text-align: left; }
+footer.lesson-nav .nav-index { flex: 0 0 auto; opacity: 0.75; }
+footer.lesson-nav .nav-next { flex: 1 1 0; text-align: right; }
+footer.lesson-nav .is-off { opacity: 0.35; cursor: default; }
+footer.lesson-nav a { border-bottom: none; }
 
 /* --- Referencias: tablas ------------------------------------------------- */
 

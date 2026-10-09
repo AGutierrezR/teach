@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · Maps of Content (MOC) — Second Brain</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Lección 03 · Estructura</div>
+  <h1>Maps of Content (MOC)</h1>
+  <p class="subtitle">Un MOC es un nodo que existe para orientarte: reúne notas de un tema y explica cómo se relacionan. Es cómo le das forma a la red sin volver a las carpetas.</p>
+
+  <h2><span class="num">00</span>Antes de empezar: recuerda</h2>
+
+  <div class="quiz">
+    <div class="q">Un nodo sin enlaces se llama…</div>
+    <button class="opt" data-correct="false">Enlazado</button>
+    <button class="opt" data-correct="false">Permanente</button>
+    <button class="opt" data-correct="true">Huérfano</button>
+    <button class="opt" data-correct="false">Concepto</button>
+    <div class="explain">Huérfano: solo se alcanza buscándolo. Un MOC es justo una de las formas de dejar de serlo.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">Una idea propia, al procesarla, va a…</div>
+    <button class="opt" data-correct="false">Una simple tarea</button>
+    <button class="opt" data-correct="false">El archivo bruto</button>
+    <button class="opt" data-correct="false">Una nota diaria</button>
+    <button class="opt" data-correct="true">Un nodo permanente</button>
+    <div class="explain">Nodo permanente con ID, enlazado. Las tareas y las dailies son otros destinos, no el de una idea.</div>
+  </div>
+
+  <h2><span class="num">01</span>Qué es (y qué no es) un MOC</h2>
+
+  <p>Un MOC es <strong>un nodo más</strong>: tiene su <code>:ID:</code> y su <code>#+title:</code>. Lo especial es su función — es un <strong>punto de entrada</strong> a un tema.</p>
+
+  <table>
+    <tr><th>No es…</th><th>Es…</th></tr>
+    <tr><td>Una carpeta que contiene notas</td><td>Un nodo que apunta hacia notas (ellas viven libres)</td></tr>
+    <tr><td>Un índice o TOC rígido</td><td>Un mapa líquido que reordenas cuando quieras</td></tr>
+    <tr><td>Una lista automática por tag</td><td>Una curación con comentarios entre los enlaces</td></tr>
+  </table>
+
+  <p>Nick Milo, que acuñó el término, lo resume así: eres el <em>cartógrafo</em>. Un MOC te ayuda a <strong>recoger, desarrollar y navegar</strong> ideas. Esas son sus tres fases.</p>
+
+  <h2><span class="num">02</span>Las tres fases de un MOC</h2>
+  <table>
+    <tr><th>Fase</th><th>Qué haces</th></tr>
+    <tr><td><strong>Recoger</strong> (gather)</td><td>Juntas los enlaces de las notas de un tema. Feo y desordenado está bien: es el borrador.</td></tr>
+    <tr><td><strong>Desarrollar</strong> (collide)</td><td>Reordenas por grupos y, sobre todo, <em>añades comentarios</em> que relacionan las notas entre sí. Aquí piensas.</td></tr>
+    <tr><td><strong>Navegar</strong> (navigate)</td><td>El MOC ya funciona como puerta de entrada: entras por él y recorres el tema.</td></tr>
+  </table>
+
+  <div class="callout">
+    <span class="label">La clave</span>
+    <p>La diferencia entre un MOC y una lista no son los enlaces: son los <strong>comentarios entre ellos</strong>. Una línea tuya que dice <em>por qué</em> esas notas van juntas es lo que convierte un índice en un mapa.</p>
+  </div>
+
+  <h2><span class="num">03</span>Anatomía de un MOC</h2>
+
+  <div class="org-example">#+title: MOC Neovim
+#+filetags: moc
+
+Mi mapa de Neovim. Si no recuerdo algo de la config, empiezo aquí.
+
+* Configuración
+Dónde vive cada cosa y cómo se carga.
+- [[id:...][Mi config en Lua]] — el punto de partida.
+- [[id:...][Carga perezosa con lazy.nvim]] — por qué arranco rápido.
+
+* Edición
+- [[id:...][Text objects]] — la base de mover y editar.
+
+* Herramientas
+- [[id:...][org.nvim: captura y agenda]] — el segundo cerebro.</div>
+
+  <p>Fíjate en las piezas: <code>#+title:</code>, un tag <code>moc</code> (para poder listar todos tus MOCs), una <strong>introducción</strong> de una o dos líneas, grupos con un <strong>comentario</strong>, y enlaces con <strong>descripción</strong>.</p>
+
+  <h2><span class="num">04</span>Práctica guiada: tu primer MOC</h2>
+  <p>Vas a crear tu MOC raíz, el <strong>MOC Segundo Cerebro</strong>, que enlaza lo que ya has aprendido.</p>
+  <ol class="steps">
+    <li><kbd>Space O m f</kbd> → escribe <code>MOC Segundo Cerebro</code> → <kbd>Enter</kbd> → se crea el nodo.</li>
+    <li>Arriba del todo, añade <code>#+filetags: moc</code> y una línea de intro: <em>"Empezar aquí si me pierdo."</em></li>
+    <li>Crea tres grupos como headlines: <code>* Fundamentos</code>, <code>* Flujo</code>, <code>* Conexiones externas</code>.</li>
+    <li>Bajo cada grupo, escribe una línea de comentario y enlaza 2-3 notas con <kbd>Space O m i</kbd> (usa los nodos que ya tengas; si faltan, créalos sobre la marcha).</li>
+    <li>Guarda con <kbd>:w</kbd>. Abre la ventana de backlinks (<kbd>Space O m l</kbd>): tu MOC ya es un nodo con enlaces salientes.</li>
+  </ol>
+
+  <h2><span class="num">05</span>Cuándo partir un MOC en dos</h2>
+  <p>Un MOC debe caber, más o menos, en una pantalla. Si crece hasta mezclar <strong>dos temas que casi nunca lees juntos</strong>, no es un MOC grande: son dos MOCs. Crea un MOC nuevo para el tema que se desgaja y deja en el original un enlace hacia él (un MOC puede enlazar a otro MOC).</p>
+
+  <h2><span class="num">06</span>Anti-patrones</h2>
+  <table>
+    <tr><th>Anti-patrón</th><th>Por qué duele</th></tr>
+    <tr><td>MOC-volcado: pegar enlaces sin comentarios</td><td>Eso ya lo hace la búsqueda; no aporta criterio.</td></tr>
+    <tr><td>MOC prematuro: crearlo con 1 nota</td><td>Es trabajo que aún no hace falta. Espera a ~5 notas.</td></tr>
+    <tr><td>Un MOC por tag</td><td>Los tags agrupan solos; un MOC debe curar, no contar.</td></tr>
+    <tr><td>Confundir proyecto con MOC</td><td>El proyecto enlaza entregables y tareas; el MOC, conocimiento.</td></tr>
+  </table>
+
+  <h2><span class="num">07</span>Compruébalo (recuperación)</h2>
+
+  <div class="quiz">
+    <div class="q">¿Qué es un MOC?</div>
+    <button class="opt" data-correct="false">Una carpeta de notas</button>
+    <button class="opt" data-correct="false">Una lista de etiquetas</button>
+    <button class="opt" data-correct="true">Un nodo que enlaza</button>
+    <button class="opt" data-correct="false">Un archivo de tareas</button>
+    <div class="explain">Un nodo (con ID) que enlaza hacia otras notas para darte un punto de entrada.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Cuándo se crea un MOC?</div>
+    <button class="opt" data-correct="false">Antes de tener notas</button>
+    <button class="opt" data-correct="true">Cuando unas 5 notas</button>
+    <button class="opt" data-correct="false">Cada vez que guardo</button>
+    <button class="opt" data-correct="false">Solo al acabar todo</button>
+    <div class="explain">De abajo arriba: cuando un tema ya tiene material y empiezas a buscar las notas en vez de recordarlas.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué distingue un MOC bueno?</div>
+    <button class="opt" data-correct="false">Lista sin contexto</button>
+    <button class="opt" data-correct="false">Usa muchas carpetas</button>
+    <button class="opt" data-correct="false">Copia todos enlaces</button>
+    <button class="opt" data-correct="true">Comenta los grupos</button>
+    <div class="explain">Los comentarios que relacionan las notas son lo que convierte la lista en un mapa de pensamiento.</div>
+  </div>
+
+  <h2><span class="num">08</span>Práctica</h2>
+  <ul class="checklist" data-persist="lesson-03">
+    <li>Crea tu <strong>MOC Segundo Cerebro</strong> con <kbd>Space O m f</kbd>.</li>
+    <li>Añade <code>#+filetags: moc</code> y una línea de introducción.</li>
+    <li>Crea 3 grupos y enlaza al menos 3 notas reales con <kbd>Space O m i</kbd>.</li>
+    <li>Escribe un <strong>comentario</strong> bajo cada grupo explicando por qué esas notas van juntas.</li>
+    <li>Crea un segundo MOC de un área tuya (p. ej. <em>MOC Neovim</em>) solo si ya tienes ~5 notas de esa área.</li>
+    <li>En la próxima revisión semanal, reordena y añade el comentario que falte. Un MOC se desarrolla, no se escribe una vez.</li>
+  </ul>
+
+  <div class="primary">
+    <span class="label">Fuentes primarias</span>
+    <p class="title">1. Nick Milo, <a href="https://blog.linkingyourthinking.com/notes/mocs-(defn)">“MOCs (defn)”</a> y <a href="https://blog.linkingyourthinking.com/maps">“Maps”</a></p>
+    <p>El origen del término y las tres fases (recoger / desarrollar / navegar). <br>
+    2. <a href="https://www.orgroam.com/manual.html">org-roam · §3 A Brief Introduction</a> — por qué la estructura emerge de los enlaces, no de las carpetas.</p>
+  </div>
+
+  <div class="ask">
+    <p><strong>¿Te atascas o algo no cuadra?</strong> Pregúntame. Si quieres, reviso tu <em>MOC Segundo Cerebro</em> y te digo qué comentarios faltan o si algún grupo pide partirse en dos.</p>
+  </div>
+
+  <p class="ref-link"><a href="../reference/mocs.html">↗ Referencia: plantillas y tipos de MOC</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="0002-captura-y-procesado.html">← 02 · Captura y procesado</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">04 · próximamente</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

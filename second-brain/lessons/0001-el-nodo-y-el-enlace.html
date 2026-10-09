@@ -96,17 +96,17 @@
 
   <div class="quiz">
     <div class="q">¿Qué convierte un archivo <code>.org</code> en un nodo?</div>
-    <button class="opt" data-correct="true">Poseer una propiedad ID</button>
     <button class="opt" data-correct="false">Vivir dentro de roam</button>
     <button class="opt" data-correct="false">Tener enlaces entrantes</button>
+    <button class="opt" data-correct="true">Poseer una propiedad ID</button>
     <button class="opt" data-correct="false">Usar el título heredado</button>
     <div class="explain">Es la propiedad <code>:ID:</code> (a nivel de archivo o de headline). Sin ella, el índice de org-roam ignora el contenido aunque tenga título o enlaces.</div>
   </div>
 
   <div class="quiz">
     <div class="q">¿Qué tipo de enlace construye el grafo de org-roam?</div>
-    <button class="opt" data-correct="true">Un enlace tipo id</button>
     <button class="opt" data-correct="false">Una ruta file larga</button>
+    <button class="opt" data-correct="true">Un enlace tipo id</button>
     <button class="opt" data-correct="false">Una referencia web externa</button>
     <button class="opt" data-correct="false">Un corchete doble simple</button>
     <div class="explain">Solo los enlaces <code>id:</code> cuentan como aristas del grafo (los <code>file:</code> siguen funcionando como enlaces org normales, pero no conectan nodos).</div>
@@ -114,10 +114,10 @@
 
   <div class="quiz">
     <div class="q">¿Qué muestra la ventana de backlinks?</div>
-    <button class="opt" data-correct="true">Notas que enlazan aquí</button>
     <button class="opt" data-correct="false">Todos los nodos nuevos</button>
     <button class="opt" data-correct="false">Archivos de la carpeta</button>
     <button class="opt" data-correct="false">Nodos sin título alguno</button>
+    <button class="opt" data-correct="true">Notas que enlazan aquí</button>
     <div class="explain">Los backlinks son los enlaces que <em>entran</em> al nodo actual: las notas que ya apuntan a él.</div>
   </div>
 
@@ -144,9 +144,12 @@
     <p><strong>¿Te has atascado o algo no cuadra?</strong> Pregúntame. Soy tu profesor: puedo explicarte cualquier paso, revisar tu <code>init.org</code>, o adaptar la siguiente lección si el circuito de hoy te ha resultado raro. Todo lo de esta lección está también comprimido en la referencia de atajos.</p>
   </div>
 
+  <p class="ref-link"><a href="../reference/org-nvim-roam-atajos.html">↗ Referencia: atajos de org-roam</a></p>
+
   <footer class="lesson-nav">
-    <span>Lección 01 · El nodo y el enlace</span>
-    <span><a href="../reference/org-nvim-roam-atajos.html">Referencia: atajos de org-roam ↗</a></span>
+    <span class="nav-prev is-off">Inicio</span>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <a class="nav-next" href="0002-captura-y-procesado.html">02 · Captura y procesado →</a>
   </footer>
 
 </div>

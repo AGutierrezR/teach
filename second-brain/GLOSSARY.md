@@ -20,8 +20,12 @@ _Avoid_: Link interno, hyperlink.
 Un enlace que *entra* a un nodo: otra nota que apunta hacia él. Se ven en la ventana de backlinks.
 _Avoid_: Enlace entrante, referencia inversa.
 
+**ROAM_REFS**:
+Propiedad de un nodo que declara su(s) **fuente(s) externa(s)**: una URL (`https://...`) o clave de cita (`@key`, `[cite:@key]`, `cite:key`). Da identidad externa al nodo (de qué trata) y es lo que permite conectar citas repartidas por la red. No se indexa como enlace; no meter IDs de nodos aquí. En org.nvim: `Space O m R` (`roam_ref_add`).
+_Avoid_: Referencias, metadatos de fuente.
+
 **Reflink**:
-Un enlace a un nodo hecho por *referencia* (`ROAM_REFS`): por URL o clave de cita, aunque no haya `id:` link. Distinto de un backlink.
+La conexión que aparece en la ventana de backlinks cuando *otro* nodo cita uno de los `ROAM_REFS` de este nodo (una URL o una clave de cita), aunque no exista un `id:` link entre ambos. Distinto de un backlink (que sí es un `id:` link).
 _Avoid_: Referencia, cita.
 
 **Referencia no enlazada** (unlinked reference):
@@ -49,6 +53,14 @@ _Avoid_: Nota de idea.
 **MOC** (Map of Content):
 Nota que agrupa y enlaza un conjunto de notas relacionadas para dar estructura al grafo. Reemplaza a la carpeta como forma de "agrupar".
 _Avoid_: Índice, hub, nota madre.
+
+**Nodo huérfano** (orphan):
+Nodo sin ningún enlace entrante ni saliente. Solo se alcanza por búsqueda, no navegando. Es una *norma de calidad*, no un error técnico: org-roam lo permite. Una nota efímera puede ser huérfana; una permanente ya procesada, no debería serlo.
+_Avoid_: Nota suelta, nota perdida.
+
+**Alcanzabilidad** (reachability):
+Propiedad de un nodo que se puede llegar a él navegando desde algún punto de entrada: otro nodo, un MOC o una daily. Reformula la norma "todo nodo debe estar enlazado": lo que importa es ser alcanzable, no tener un enlace forzado. Un enlace sin sentido es peor que un huérfano temporal.
+_Avoid_: Conectividad.
 
 ## Flujo de trabajo
 

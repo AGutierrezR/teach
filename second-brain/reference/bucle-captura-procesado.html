@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencia · El bucle captura → procesado</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Referencia rápida · imprimible</div>
+  <h1>El bucle: captura → procesado</h1>
+  <p class="subtitle">El flujo que mantiene vivo un segundo cerebro. Prefijo: <kbd>&lt;leader&gt;O</kbd> (leader = <kbd>Space</kbd>).</p>
+
+  <h2>Fase 1 · Capturar (rápido, sin decidir)</h2>
+  <table>
+    <tr><th>Atajo</th><th>Acción</th></tr>
+    <tr><td><kbd>Space O c</kbd></td><td>Capturar tarea/nota → inbox (<code>refile.org</code>).</td></tr>
+    <tr><td><kbd>Space O m j</kbd></td><td>Capturar en la nota diaria de hoy (pensamientos del día).</td></tr>
+  </table>
+  <p><strong>Criterio:</strong> resonancia. Si te resulta útil, interesante o conecta con algo que piensas → captúralo. Si no → no lo captures.</p>
+  <p><strong>Regla:</strong> un único inbox canónico. Capturar en varios sitios = procesar en ninguno.</p>
+
+  <h2>Fase 2 · Procesar (despacio, con decisiones)</h2>
+  <p>Cada línea del inbox sale por una de estas puertas:</p>
+
+  <div class="org-example">¿Qué es esta línea?
+│
+├── ES UNA ACCIÓN ................ →  TAREA
+│     (llamar, arreglar, escribir)     • refile:  Space O r
+│                                      • fecha:    Space O s / O d
+│                                      • vive en:  agenda / proyecto
+│
+├── ES SOBRE UNA FUENTE EXTERNA .. →  NOTA DE LITERATURA
+│     (libro, paper, web)              • crear nodo: Space O m f
+│                                      • añadir ROAM_REFS (URL/cita)
+│
+├── ES UNA IDEA PROPIA ........... →  NOTA PERMANENTE
+│     (una conexión, una tesis)        • crear nodo: Space O m f
+│                                      • enlazar ≥1 nodo: Space O m i
+│
+└── NO ES NADA DE LO ANTERIOR .... →  BORRAR (sin culpa)</div>
+
+  <h2>Rutina de procesado</h2>
+  <table>
+    <tr><th>Frecuencia</th><th>Qué haces</th></tr>
+    <tr><td>Diaria (5–10 min)</td><td>Vaciar el inbox del día: clasificar cada captura en las 3 puertas o borrarla.</td></tr>
+    <tr><td>Semanal (20–30 min)</td><td>Revisar que no queden capturas sin procesar; revisar proyectos; crear un MOC si un tema empieza a crecer.</td></tr>
+  </table>
+
+  <h2>Señales de que el sistema se está pudriendo</h2>
+  <ul>
+    <li>El inbox lleva más de una semana sin vaciarse.</li>
+    <li>Capturas "para ordenarlo luego" en más de un sitio.</li>
+    <li>Creas nodos pero nunca los enlazas (nodos huérfanos).</li>
+    <li>Pasas más tiempo clasificando que escribiendo nota nueva.</li>
+  </ul>
+
+  <div class="callout">
+    <span class="label">Recordatorio</span>
+    <p>Capturar ya es fácil. El músculo a entrenar es el de <strong>procesar</strong>: coger la línea, decidir su puerta, y borrarla sin drama. Es literalmente lo que diferencia una carpeta de un segundo cerebro.</p>
+  </div>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="../lessons/0002-captura-y-procesado.html">← Lección 02</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">Referencia</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

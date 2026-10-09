@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencia · Maps of Content</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Referencia rápida · imprimible</div>
+  <h1>Maps of Content (MOC)</h1>
+  <p class="subtitle">Plantillas y criterios. Atajos: crear nodo <kbd>Space O m f</kbd>, enlazar <kbd>Space O m i</kbd>, backlinks <kbd>Space O m l</kbd>.</p>
+
+  <h2>Plantilla de MOC</h2>
+  <div class="org-example">#+title: MOC &lt;tema&gt;
+#+filetags: moc
+
+&lt;Una o dos líneas: para qué sirve este mapa.&gt;
+
+* &lt;Grupo 1&gt;
+&lt;Comentario: por qué estas notas van juntas.&gt;
+- [[id:...][Nota]] — &lt;qué aporta&gt;
+- [[id:...][Nota]] — &lt;qué aporta&gt;
+
+* &lt;Grupo 2&gt;
+&lt;Comentario&gt;
+- [[id:...][Nota]] — &lt;qué aporta&gt;</div>
+
+  <h2>Las tres fases</h2>
+  <table>
+    <tr><th>Fase</th><th>Qué haces</th></tr>
+    <tr><td>Recoger</td><td>Juntar los enlaces del tema. Desordenado está bien.</td></tr>
+    <tr><td>Desarrollar</td><td>Agrupar y <strong>comentar</strong>: relacionar las notas entre sí.</td></tr>
+    <tr><td>Navegar</td><td>Usarlo como puerta de entrada habitual al tema.</td></tr>
+  </table>
+
+  <h2>Tipos de MOC</h2>
+  <table>
+    <tr><th>Tipo</th><th>Ejemplo</th></tr>
+    <tr><td>De concepto / tema</td><td>MOC Neovim, MOC Productividad, MOC Zettelkasten</td></tr>
+    <tr><td>De fuentes</td><td>MOC Libros 2026, MOC Papers</td></tr>
+    <tr><td>De personas</td><td>MOC Colegas (qué notas nacieron de cada quién)</td></tr>
+    <tr><td>De vida / áreas</td><td>MOC Salud, MOC Finanzas</td></tr>
+    <tr><td>Índice (raíz)</td><td>MOC Segundo Cerebro → enlaza a los demás MOCs</td></tr>
+  </table>
+
+  <h2>Cuándo crear / partir</h2>
+  <ul>
+    <li><strong>Crear</strong>: cuando un tema tiene ~5-7 notas y empiezas a buscarlas en vez de recordarlas.</li>
+    <li><strong>Partir</strong>: cuando no cabe en una pantalla o mezcla dos temas que casi nunca lees juntos.</li>
+    <li>Un MOC puede <strong>enlazar a otro MOC</strong>: así se anidan sin jerarquía rígida.</li>
+  </ul>
+
+  <h2>Anti-patrones</h2>
+  <ul>
+    <li><strong>Volcado</strong>: pegar enlaces sin comentarios (eso ya lo hace la búsqueda).</li>
+    <li><strong>Prematuro</strong>: abrirlo con una sola nota.</li>
+    <li><strong>Uno por tag</strong>: el tag agrupa solo; el MOC cura.</li>
+    <li><strong>Confundir con proyecto</strong>: proyecto = entregables/tareas; MOC = conocimiento.</li>
+  </ul>
+
+  <div class="callout">
+    <span class="label">MOC y PARA</span>
+    <p>PARA dice <em>dónde</em> vive lo accionable (proyectos/áreas). Un MOC dice <em>cómo se conecta</em> el conocimiento. No compiten: un proyecto puede apoyarse en un MOC; una misma nota vive en un solo proyecto pero puede aparecer en varios MOCs.</p>
+  </div>
+
+  <p class="ref-link"><a href="https://blog.linkingyourthinking.com/notes/mocs-(defn)">↗ Fuente: Nick Milo, “MOCs (defn)”</a></p>
+
+  <footer class="lesson-nav">
+    <a class="nav-prev" href="../lessons/0003-maps-of-content.html">← Lección 03</a>
+    <a class="nav-index" href="../index.html">Índice</a>
+    <span class="nav-next is-off">Referencia</span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

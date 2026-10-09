@@ -12,9 +12,23 @@
   "use strict";
 
   /* --- Quiz ------------------------------------------------------------- */
+  function shuffle(nodes) {
+    for (var i = nodes.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = nodes[i]; nodes[i] = nodes[j]; nodes[j] = t;
+    }
+    return nodes;
+  }
+
   function initQuiz(quiz) {
-    var opts = quiz.querySelectorAll(".opt");
+    var opts = Array.prototype.slice.call(quiz.querySelectorAll(".opt"));
     var explain = quiz.querySelector(".explain");
+    /* Mezcla las opciones salvo que el quiz pida lo contrario con data-noshuffle.
+       Evita que la posición delate la respuesta correcta. */
+    if (!quiz.hasAttribute("data-noshuffle")) {
+      shuffle(opts).forEach(function (o) { quiz.insertBefore(o, explain); });
+    }
+    opts = quiz.querySelectorAll(".opt");
     opts.forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (quiz.dataset.answered === "1") return;
