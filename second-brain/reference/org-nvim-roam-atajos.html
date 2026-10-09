@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencia · org-roam en org.nvim</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Referencia rápida · imprimible</div>
+  <h1>org-roam en org.nvim</h1>
+  <p class="subtitle">Atajos, anatomía de un nodo y comandos. Prefijo configurado: <kbd>&lt;leader&gt;O</kbd> (leader = <kbd>Space</kbd>). Los comandos roam viven bajo <kbd>&lt;leader&gt;O</kbd> <kbd>m</kbd>.</p>
+
+  <h2>Anatomía de un nodo</h2>
+  <div class="org-example"><span class="cm">← nodo a nivel de ARCHIVO</span>
+:PROPERTIES:
+<span class="hl">:ID:</span>       7f3a…            <span class="cm">(UUID generado por org)</span>
+:END:
+<span class="hl">#+title:</span> Zettelkasten
+<span class="hl">#+filetags:</span> metodo
+
+Texto de la nota. Enlaza a otras ideas con enlaces id:
+
+* Una idea hija
+:PROPERTIES:
+<span class="hl">:ID:</span>      a1b2…            <span class="cm">← nodo a nivel de HEADLINE</span>
+:END:</div>
+
+  <table>
+    <tr><th>Elemento</th><th>Qué hace</th></tr>
+    <tr><td><code>:ID:</code></td><td>Identidad del nodo. <strong>Sin esto no hay nodo.</strong></td></tr>
+    <tr><td><code>#+title:</code></td><td>Nombre visible del nodo de archivo (el headline ya tiene su texto).</td></tr>
+    <tr><td><code>#+filetags:</code></td><td>Etiquetas del nodo de archivo.</td></tr>
+    <tr><td><code>[[id:…][Texto]]</code></td><td>Enlace a otro nodo. Único tipo que construye el grafo.</td></tr>
+    <tr><td><code>ROAM_ALIASES</code></td><td>Nombres alternativos para encontrar el nodo.</td></tr>
+    <tr><td><code>ROAM_REFS</code></td><td>URLs / claves de cita del nodo (generan reflinks).</td></tr>
+  </table>
+
+  <h2>Atajos · grupo roam (<kbd>&lt;leader&gt;O</kbd> <kbd>m</kbd>)</h2>
+  <table>
+    <tr><th>Atajo</th><th>Acción</th></tr>
+    <tr><td><kbd>m f</kbd></td><td><strong>Buscar nodo.</strong> Escribir un título nuevo lo crea. El comando más usado.</td></tr>
+    <tr><td><kbd>m i</kbd></td><td><strong>Insertar enlace</strong> a un nodo en el cursor; crea el nodo si no existe. En modo visual, el texto seleccionado es el título y la descripción.</td></tr>
+    <tr><td><kbd>m l</kbd></td><td><strong>Backlinks.</strong> Abre/cierra la ventana con las notas que enlazan al nodo actual.</td></tr>
+    <tr><td><kbd>m c</kbd></td><td>Capturar dentro de un nodo existente (o nuevo) con template.</td></tr>
+    <tr><td><kbd>m x</kbd></td><td>Extraer el subtree actual a un archivo-nodo nuevo.</td></tr>
+    <tr><td><kbd>m w</kbd></td><td>Refile: mover el subtree actual bajo otro nodo.</td></tr>
+    <tr><td><kbd>m a</kbd></td><td>Gestionar alias del nodo.</td></tr>
+    <tr><td><kbd>m R</kbd></td><td>Gestionar refs (URL / cita) del nodo.</td></tr>
+    <tr><td><kbd>m t</kbd></td><td>Gestionar tags del nodo.</td></tr>
+    <tr><td><kbd>m g</kbd></td><td>Ver el grafo de nodos (necesita Graphviz).</td></tr>
+    <tr><td><kbd>m r</kbd></td><td>Visitar un nodo al azar.</td></tr>
+  </table>
+
+  <h2>Atajos · dailies (<kbd>&lt;leader&gt;O</kbd> <kbd>m</kbd> <kbd>d</kbd>)</h2>
+  <table>
+    <tr><th>Atajo</th><th>Acción</th></tr>
+    <tr><td><kbd>m d t</kbd></td><td>Ir a la nota diaria de hoy.</td></tr>
+    <tr><td><kbd>m d y</kbd> / <kbd>m d T</kbd></td><td>Ir a ayer / mañana.</td></tr>
+    <tr><td><kbd>m d d</kbd></td><td>Ir a una fecha (calendario).</td></tr>
+    <tr><td><kbd>m j</kbd></td><td>Capturar en la nota diaria de hoy.</td></tr>
+    <tr><td><kbd>m d n</kbd> / <kbd>m d p</kbd></td><td>Nota diaria siguiente / anterior.</td></tr>
+  </table>
+
+  <h2>Atajos · org esenciales (fuera de roam)</h2>
+  <table>
+    <tr><th>Atajo</th><th>Acción</th></tr>
+    <tr><td><kbd>g?</kbd></td><td><strong>Ver todos los atajos disponibles</strong> en el buffer actual. El comando que más te ahorrará tiempo.</td></tr>
+    <tr><td><kbd>&lt;leader&gt;O c</kbd></td><td>Capturar (capture) desde cualquier buffer.</td></tr>
+    <tr><td><kbd>&lt;leader&gt;O r</kbd></td><td>Refile: mover un subtree a su sitio.</td></tr>
+    <tr><td><kbd>&lt;leader&gt;O a</kbd></td><td>Agenda (tareas con fechas de todos los archivos).</td></tr>
+    <tr><td><kbd>&lt;leader&gt;O g</kbd></td><td>Saltar a cualquier headline de tus archivos de agenda.</td></tr>
+    <tr><td><kbd>&lt;C-c&gt;&lt;C-c&gt;</kbd></td><td>Acción contextual: marcar tarea, ejecutar bloque, recalcular tabla…</td></tr>
+    <tr><td><kbd>Tab</kbd> / <kbd>S-Tab</kbd></td><td>Plegar/desplegar subtree / todo el archivo.</td></tr>
+  </table>
+
+  <h2>Comandos <code>:Org</code></h2>
+  <table>
+    <tr><th>Comando</th><th>Acción</th></tr>
+    <tr><td><code>:Org roam_node_find Título</code></td><td>Ir a un nodo por título, o crearlo.</td></tr>
+    <tr><td><code>:Org roam_db_sync</code></td><td>Reindexar los archivos roam a mano.</td></tr>
+    <tr><td><code>:Org roam_db_sync force</code></td><td>Reconstruir el índice completo.</td></tr>
+    <tr><td><code>:Org checkhealth</code></td><td>Diagnóstico del plugin y sus extensiones. Se usa <code>:checkhealth org</code>.</td></tr>
+  </table>
+
+  <div class="callout">
+    <span class="label">Regla de oro</span>
+    <p>¿Dudas de un atajo? <kbd>g?</kbd> dentro de un buffer org. La lista se filtra con <kbd>/</kbd>. No memorices: consulta.</p>
+  </div>
+
+  <footer class="lesson-nav">
+    <span>Referencia · org-roam / org.nvim</span>
+    <span><a href="https://org-nvim.com/manual/org-extensions-roam.html">Fuente: manual oficial ↗</a></span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>

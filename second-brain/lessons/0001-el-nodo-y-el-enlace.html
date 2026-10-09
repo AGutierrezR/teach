@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · El nodo y el enlace — Second Brain</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lesson-meta">Lección 01 · Fundamentos</div>
+  <h1>El nodo y el enlace</h1>
+  <p class="subtitle">Tienes el motor instalado y un esqueleto escrito. Falta lo único que separa "carpeta de notas" de "segundo cerebro": entender qué es un nodo y cómo se conecta.</p>
+
+  <p>Tu misión es dejar de perder ideas y conocimiento. Ya has hecho la parte difícil de arranque: tienes <code>org.nvim</code> funcionando con la extensión <code>roam</code> activada y un esqueleto tipo PARA en <code>~/org/roam/init.org</code>. Pero un segundo cerebro no es una carpeta ordenada: es una <strong>red</strong>. Esta lección arregla el modelo mental y te da tu primera conexión real entre dos notas.</p>
+
+  <div class="callout">
+    <span class="label">Idea única de esta lección</span>
+    <p>En org-roam la unidad no es el archivo, es el <strong>nodo</strong>; y la organización no es una carpeta, es un <strong>enlace</strong>. Si te llevas solo esto, ya has ganado.</p>
+  </div>
+
+  <h2><span class="num">01</span>Un nodo es una cosa con ID</h2>
+
+  <p>En org-roam, <strong>nodo</strong> es cualquier elemento con una propiedad <code>:ID:</code> propia: un archivo con un <code>:ID:</code> a nivel de archivo, o un headline con su propio <code>:ID:</code>. Sin <code>:ID:</code>, no es un nodo — es solo texto que el índice ignora.</p>
+
+  <p>Tu propio directorio ya tiene los dos casos. Mira tu nodo de prueba:</p>
+
+  <div class="org-example"><span class="cm">:PROPERTIES:</span>
+<span class="hl">:ID:</span>       91d2773f-af70-4f08-9d28-b94569cfc167
+<span class="cm">:END:</span>
+<span class="hl">#+title:</span> test</div>
+
+  <p>Ese <code>:ID:</code> a nivel de archivo es lo que convierte a <code>20261007000700-test.org</code> en un nodo llamado <em>test</em>. El título <code>#+title</code> es solo su nombre visible; el ID es su identidad.</p>
+
+  <p>Y en tu <code>init.org</code> pasa lo contrario, mira:</p>
+
+  <div class="org-example">#+TITLE: Roam - Organización Inicial
+<span class="cm">← el archivo NO tiene :ID:, así que el archivo NO es un nodo</span>
+
+* Inbox
+<span class="cm">:PROPERTIES:</span>
+<span class="hl">:ID:</span>      roam-inbox
+<span class="cm">:END:</span>
+<span class="cm">← este headline SÍ es un nodo llamado "Inbox"</span></div>
+
+  <div class="callout warn">
+    <span class="label">Aha</span>
+    <p>Tu <code>init.org</code> no aparece en el grafo como un todo, ¡pero su headline <code>Inbox</code> sí! Un archivo puede no ser nodo y contener nodos. Esto es exactamente el tipo de confusión que hace que un sistema parezca "no funcionar" cuando en realidad sí funciona — solo que no donde creías.</p>
+  </div>
+
+  <h2><span class="num">02</span>Los enlaces apuntan a IDs, no a rutas</h2>
+
+  <p>Un nodo se vuelve útil cuando <em>otra</em> nota lo enlaza. El enlace de org-roam tiene esta forma:</p>
+
+  <div class="org-example">[[<span class="hl">id:</span>91d2773f-af70-4f08-9d28-b94569cfc167][test]]</div>
+
+  <p>Fíjate en lo importante: apunta al <strong>ID</strong>, no a la ruta del archivo. Por eso puedes renombrar, mover o reorganizar el archivo y el enlace <em>sigue funcionando</em>. Eso es imposible con los enlaces normales de org.</p>
+
+  <p>Y aquí está el contraste con lo que ya tienes: tus tareas capturadas usan enlaces <code>file:</code> como este:</p>
+
+  <div class="org-example">[[<span class="hl">file:</span>~/.config/nvim/lua/plugins/org.lua::"saghen/blink.cmp",]]</div>
+
+  <p>Ese enlace es perfectamente válido para una <em>tarea</em> ("ve a esta línea de código"), pero <strong>no forma parte del grafo de org-roam</strong>. Para que dos ideas queden conectadas para siempre, el enlace tiene que ser <code>id:</code>.</p>
+
+  <div class="callout">
+    <span class="label">Regla práctica</span>
+    <p><code>file:</code> para "salta a este punto". <code>id:</code> para "esta idea se relaciona con esta otra". Solo el segundo construye tu red.</p>
+  </div>
+
+  <h2><span class="num">03</span>La recompensa: backlinks</h2>
+
+  <p>Un <strong>backlink</strong> es un enlace que <em>entra</em> a un nodo: las notas que apuntan hacia él. Cuando abres un nodo y ves sus backlinks, estás viendo algo que ninguna carpeta puede darte: <strong>qué conversaciones ya existen entre tus notas</strong>. Este es el momento en que el sistema empieza a "pensar" contigo.</p>
+
+  <p>No hace falta que recuerdes los atajos: en cualquier buffer org pulsa <kbd>g?</kbd> y verás todos los comandos disponibles.</p>
+
+  <h2><span class="num">04</span>Práctica guiada <span class="sidenote">(marca cada paso; se guarda en este navegador)</span></h2>
+
+  <p>Tu prefijo es <kbd>&lt;leader&gt;O</kbd> (con <kbd>leader</kbd> = <kbd>Space</kbd> por defecto en LazyVim). Haz este circuito completo, sin saltarte el paso 4 — ahí está el pago.</p>
+
+  <ul class="checklist" data-persist="lesson-01">
+    <li>Abre Neovim en cualquier org, p. ej. <code>nvim ~/org/todo.org</code>.</li>
+    <li>Pulsa <kbd>Space</kbd> <kbd>O</kbd> <kbd>m</kbd> <kbd>f</kbd> (busca nodo). Escribe <code>Zettelkasten</code> y <kbd>Enter</kbd>. Se abre una captura: guarda con <kbd>:w</kbd>.</li>
+    <li>Vuelve a otro archivo, pon el cursor en una línea y pulsa <kbd>Space</kbd> <kbd>O</kbd> <kbd>m</kbd> <kbd>i</kbd> (insertar nodo). Escribe <code>Zettelkasten</code> y <kbd>Enter</kbd>. Se inserta <code>[[id:…][Zettelkasten]]</code>.</li>
+    <li>Con el cursor sobre ese enlace, pulsa <kbd>Space</kbd> <kbd>O</kbd> <kbd>m</kbd> <kbd>l</kbd> (ventana de backlinks). Debe listar <em>esta</em> nota apuntando al nodo.</li>
+    <li>Abre <code>~/org/roam/20261007000700-test.org</code> y localiza su <code>:ID:</code> a nivel de archivo.</li>
+  </ul>
+
+  <div class="callout">
+    <span class="label">La victoria de hoy</span>
+    <p>Has creado un nodo y lo has conectado, y puedes ver el enlace de vuelta. Ese circuito — <strong>crear nodo → enlazar → ver backlink</strong> — es el 80% de lo que hace org-roam. Todo lo demás lo amplifica.</p>
+  </div>
+
+  <h2><span class="num">05</span>Compruébalo (recuperación)</h2>
+  <p>Responde de memoria, sin volver a leer. Equivocarse aquí es parte de aprender.</p>
+
+  <div class="quiz">
+    <div class="q">¿Qué convierte un archivo <code>.org</code> en un nodo?</div>
+    <button class="opt" data-correct="true">Poseer una propiedad ID</button>
+    <button class="opt" data-correct="false">Vivir dentro de roam</button>
+    <button class="opt" data-correct="false">Tener enlaces entrantes</button>
+    <button class="opt" data-correct="false">Usar el título heredado</button>
+    <div class="explain">Es la propiedad <code>:ID:</code> (a nivel de archivo o de headline). Sin ella, el índice de org-roam ignora el contenido aunque tenga título o enlaces.</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué tipo de enlace construye el grafo de org-roam?</div>
+    <button class="opt" data-correct="true">Un enlace tipo id</button>
+    <button class="opt" data-correct="false">Una ruta file larga</button>
+    <button class="opt" data-correct="false">Una referencia web externa</button>
+    <button class="opt" data-correct="false">Un corchete doble simple</button>
+    <div class="explain">Solo los enlaces <code>id:</code> cuentan como aristas del grafo (los <code>file:</code> siguen funcionando como enlaces org normales, pero no conectan nodos).</div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">¿Qué muestra la ventana de backlinks?</div>
+    <button class="opt" data-correct="true">Notas que enlazan aquí</button>
+    <button class="opt" data-correct="false">Todos los nodos nuevos</button>
+    <button class="opt" data-correct="false">Archivos de la carpeta</button>
+    <button class="opt" data-correct="false">Nodos sin título alguno</button>
+    <div class="explain">Los backlinks son los enlaces que <em>entran</em> al nodo actual: las notas que ya apuntan a él.</div>
+  </div>
+
+  <h3>Reto final, en papel</h3>
+  <p>Sin mirar: explica en una frase por qué tu <code>init.org</code> "desaparece" del grafo aunque tú lo veas lleno de contenido.</p>
+  <button data-reveal="r1" data-show="Mostrar respuesta" data-hide="Ocultar">Mostrar respuesta</button>
+  <div id="r1" class="reveal" hidden>
+    <p>Porque el archivo no tiene un <code>:ID:</code> a nivel de archivo, así que no es un nodo. Solo sus headlines con ID (como <code>Inbox</code>) entran al grafo. El contenido sin ID es invisible para org-roam.</p>
+  </div>
+
+  <h2><span class="num">06</span>Tu esqueleto PARA: úsalo, no te cases con él</h2>
+
+  <p>Tu <code>init.org</code> usa <strong>PARA</strong> (Projects, Areas, Resources, Archive), el método de <em>Building a Second Brain</em> de Tiago Forte. Ese método organiza <em>lo accionable</em> por ubicación, y es bueno para eso.</p>
+
+  <p>Pero org-roam organiza <em>el conocimiento</em> por enlaces. Mezclar ambos sin entender la diferencia es la causa número uno de que un segundo cerebro se pudra: acabas pasando el tiempo decidiendo "¿en qué carpeta va esto?" en vez de escribiendo la nota. En las próximas lecciones veremos cómo conviven: PARA para proyectos y tareas, red de nodos para ideas. Por ahora, quédate con esto: <strong>los proyectos viven en un sitio; las ideas viven conectadas a otras ideas.</strong></p>
+
+  <div class="primary">
+    <span class="label">Fuente primaria de esta lección</span>
+    <p class="title"><a href="https://org-nvim.com/manual/org-extensions-roam.html">org.nvim · Manual de la extensión org-roam</a></p>
+    <p>Es la especificación de tu herramienta concreta: nodos, IDs, backlinks, reflinks, dailies y capturas. Léela entera (es corta) antes de la siguiente sesión. Para el modelo original en Emacs, el <a href="https://www.orgroam.com/manual.html">manual de org-roam</a>, sección 5 “Getting Started”.</p>
+  </div>
+
+  <div class="ask">
+    <p><strong>¿Te has atascado o algo no cuadra?</strong> Pregúntame. Soy tu profesor: puedo explicarte cualquier paso, revisar tu <code>init.org</code>, o adaptar la siguiente lección si el circuito de hoy te ha resultado raro. Todo lo de esta lección está también comprimido en la referencia de atajos.</p>
+  </div>
+
+  <footer class="lesson-nav">
+    <span>Lección 01 · El nodo y el enlace</span>
+    <span><a href="../reference/org-nvim-roam-atajos.html">Referencia: atajos de org-roam ↗</a></span>
+  </footer>
+
+</div>
+<script src="../assets/widgets.js"></script>
+</body>
+</html>
